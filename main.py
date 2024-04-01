@@ -5,6 +5,12 @@ from parser_1 import parser
 from semantics import semantic_analyzer
 from code_generator import generate_code
 
+# TODO: Add scope and binding to the language
+# TODO: Add conditionals to the language
+# TODO: Add arithmetic operations to the language
+# TODO: Make sure you can assign a variable to another variable
+# TODO: Finish the code generator
+
 
 def main():
     # Get the source code
