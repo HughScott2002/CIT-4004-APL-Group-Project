@@ -286,7 +286,7 @@ lexer = lex.lex()
 
 # Test the lexer
 
-# lexer.input(longdata)
+# lexer.input(shortdata)
 
 # for token in lexer:
 #     print("*********************************")
