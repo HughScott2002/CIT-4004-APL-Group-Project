@@ -23,6 +23,10 @@ def p_statements(p):
         p[0] = []
 
 
+#   | attempt_block
+#   | findout_block
+
+
 def p_statement(p):
     """
     statement : declaration
@@ -31,8 +35,8 @@ def p_statement(p):
               | abstract_function_declaration
               | print_statement
               | conditionals
-              | attempt_block
-              | findout_block
+              | attempt_findout_block
+
     """
     p[0] = p[1]
 
@@ -161,6 +165,13 @@ def p_conditional_expression(p):
             p[0] = p[2]
     elif len(p) == 2:
         p[0] = p[1]
+
+
+def p_attempt_findout_block(p):
+    """
+    attempt_findout_block : attempt_block findout_block
+    """
+    p[0] = ("attempt_findout_block", p[1], p[2])
 
 
 # ATTEMPT_BLOCK
@@ -348,8 +359,10 @@ def p_empty(p):
 def p_error(p):
     if p:
         print(f"Syntax error at line {p.lineno}, token='{p.value}'")
+        raise ValueError(f"Syntax error at line {p.lineno}, token='{p.value} '")
     else:
         print("Syntax error at EOF")
+        raise ValueError(f"Syntax error at EOF")
 
 
 parser = yacc.yacc()

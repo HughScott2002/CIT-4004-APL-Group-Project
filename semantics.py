@@ -1,13 +1,14 @@
-import parser_1 as parser
-from shortsourcecode import data as shortdata
-import ply.lex as lex
+# import parser_1 as parser
+# from shortsourcecode import data as shortdata
+# import ply.lex as lex
 
-# from ast_1 import ast
-
+# Symobol Table
+from typing import Union
 
 symbol_table = {}
 
 
+# Add to the symbol table
 def add_to_symbol_table(var_name, var_type, var_value=None, is_locked=False):
     if var_name in symbol_table:
         # print(f"Variable '{var_name}' is already declared")
@@ -17,6 +18,7 @@ def add_to_symbol_table(var_name, var_type, var_value=None, is_locked=False):
     return True
 
 
+# Check if the variable is in the symbol table
 def check_symbol_table(var_name):
     if var_name in symbol_table:
         return True
@@ -67,6 +69,10 @@ def semantic_analyzer(ast):
             handle_assignment(x)
         elif x[0] == "abstract_function_declaration":
             handle_assignment(x)
+        elif x[0] == "print_statement":
+            handle_print_statement(x)
+        elif x[0] == "attempt_findout_block":
+            handle_attempt_findout_block(x)
         # elif x[0] == "abstract_call":
         #     print(x[1])
         # elif x[0] == "parameter":
@@ -75,6 +81,7 @@ def semantic_analyzer(ast):
         #     print(x[2])
 
 
+# Handles declarations
 def handle_declaration(node):
     if len(node) == 4:
         var_mut, var_type, var_name = node[1][1], node[2], node[3]
@@ -89,13 +96,15 @@ def handle_declaration(node):
             print(f"Declared '{var_mut}' variable '{var_name}' of type '{var_type}'")
         else:
             print(f"Variable '{var_name}' is already declared")
+            raise ValueError(f"Variable '{var_name}' is already declared")
     elif len(node) == 5:
         var_mut, var_type, var_name, value = node[1][1], node[2], node[3], node[4]
         is_locked = var_mut == "lock"
         # Checks if the type is correct
         type_check = type_checking(var_type, value)
         if not type_check:
-            print(f"Error in type checking for '{var_name}'")
+            print(f"The variable '{var_name}' recived the wrong type")
+            raise ValueError(f"Cannot assign locked variable '{var_name}'")
         # Adds to the symbol table or sends back false
         check_symbol = add_to_symbol_table(var_name, var_type, value, is_locked)
         if check_symbol:
@@ -103,6 +112,7 @@ def handle_declaration(node):
             print(symbol_table)
         else:
             print(f"Variable '{var_name}' is already declared")
+            raise ValueError(f"Variable '{var_name}' is already declared")
         print(
             f"Declared '{var_mut}' variable '{var_name}' of type '{var_type}' with value '{value}'"
         )
@@ -110,12 +120,14 @@ def handle_declaration(node):
         raise ValueError("Invalid declaration")
 
 
+# Handles assignments
 def handle_assignment(node):
     if len(node) == 4:
         var_name, value = node[1], node[3]
         check_symbol = check_symbol_table(var_name)
         if not check_symbol:
             print(f"Undeclared variable '{var_name}'")
+            raise ValueError(f"Undeclared variable '{var_name}'")
         else:
             var_type, old_value, is_locked = symbol_table[var_name]
             if is_locked and old_value is not None:
@@ -127,74 +139,41 @@ def handle_assignment(node):
                     symbol_table[var_name] = (var_type, value, is_locked)
                     print(f"Assigned value '{value}' to variable '{var_name}'")
                 else:
+                    # TODO add type that was given
                     print(
+                        f"Type mismatch for variable '{var_name}' expected '{var_type}'"
+                    )
+                    raise ValueError(
                         f"Type mismatch for variable '{var_name}' expected '{var_type}'"
                     )
     else:
         raise ValueError("Invalid assignment")
 
 
-# semantic_analyzer(ast)
-
-# class SemanticAnalyzer:
-#     def __init__(self):
-#         self.symbol_table = {}
-
-#     def analyze(self, ast):
-#         self.visit(ast)
-
-#     def visit(self, node):
-#         if isinstance(node, tuple):
-#             node_type = node[0]
-
-#             if node_type == "declaration":
-#                 self.handle_declaration(node)
-#             elif node_type == "abstract_function_declaration":
-#                 self.handle_function_declaration(node)
-#             elif node_type == "abstract_call":
-#                 self.handle_function_call(node)
-#             # elif node_type == "if":
-#             #     self.handle_if_statement(node)
-#             # elif node_type == "for_loop":
-#             #     self.handle_for_loop(node)
-#             # elif node_type == "aslongas_statement":
-#             #     self.handle_while_loop(node)
-#             # elif node_type == "attempt_block":
-#             #     self.handle_try_block(node)
-#             # elif node_type == "findout_block":
-#             #     self.handle_except_block(node)
-#             else:
-#                 for child in node[1:]:
-#                     self.visit(child)
-
-#     def handle_declaration(self, node):
-#         _, data_type, identifier, *value = node
-#         if identifier in self.symbol_table:
-#             raise ValueError(f"Variable '{identifier}' is already declared.")
-#         self.symbol_table[identifier] = data_type
-
-#     def handle_function_declaration(self, node):
-#         _, function_name, parameters, body = node
-#         if function_name in self.symbol_table:
-#             raise ValueError(f"Function '{function_name}' is already declared.")
-#         self.symbol_table[function_name] = ("function", parameters, body)
-
-#     def handle_function_call(self, node):
-#         _, function_name, arguments = node
-#         if function_name not in self.symbol_table:
-#             raise ValueError(f"Function '{function_name}' is not declared.")
-#         function_info = self.symbol_table[function_name]
-#         if function_info[0] != "function":
-#             raise ValueError(f"'{function_name}' is not a function.")
-
-#     # Additional checks for arguments and parameters can be done here
-
-#     # Implement handlers for other AST nodes
+# Handles print statements
+def handle_print_statement(node):
+    if node[2] is not "@":
+        if check_symbol_table(node[2]):
+            var_name = node[2]
+            # TODO remove the print statement
+            var_type, value, is_locked = symbol_table[var_name]
+            print(f"{node[1]}, '{value}'")
+        else:
+            print(f"Undeclared variable '{node[2]}'")
+            raise ValueError(f"Undeclared variable '{node[2]}'")
+    else:
+        print(f"{node[1]}")
 
 
-# # lexer = lex.lex()
-# # parser = yacc.yacc()
-# # ast = parser.parse(shortdata)
-# # ast = ("declaration", "bool", "_BINARY", True)
-# # semantic_analyzer = SemanticAnalyzer()
-# # semantic_analyzer.analyze(ast)
+def handle_attempt_findout_block(node):
+    handle_attempt_block(node[1])
+    handle_findout_block(node[2])
+    # print(node)
+
+
+def handle_attempt_block(node):
+    print(node)
+
+
+def handle_findout_block(node):
+    print(node)
