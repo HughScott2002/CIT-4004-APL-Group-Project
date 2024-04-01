@@ -6,7 +6,7 @@ lock float _PI = 3.14@
 unlock bool _BINARY = true@
 lock string _This_String@
 _This_String = "This is a string."@
-_PI = 3.15@
+#_PI = 3.15@
 _BINARY = false@
 # attempt{
 #     scribe("This is a try block.")@

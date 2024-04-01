@@ -78,7 +78,11 @@ def semantic_analyzer(ast):
 def handle_declaration(node):
     if len(node) == 4:
         var_mut, var_type, var_name = node[1][1], node[2], node[3]
-        is_locked = var_mut == "lock"
+        is_locked = ""
+        if var_mut == "lock":
+            is_locked = True
+        else:
+            is_locked = False
         # type_checking(var_type, None)
         check_symbol = add_to_symbol_table(var_name, var_type, None, is_locked)
         if check_symbol:
@@ -93,9 +97,10 @@ def handle_declaration(node):
         if not type_check:
             print(f"Error in type checking for '{var_name}'")
         # Adds to the symbol table or sends back false
-        check_symbol = add_to_symbol_table(var_name, var_type, None, is_locked)
+        check_symbol = add_to_symbol_table(var_name, var_type, value, is_locked)
         if check_symbol:
             print(f"'{var_name}' added to symbol table")
+            print(symbol_table)
         else:
             print(f"Variable '{var_name}' is already declared")
         print(
@@ -111,10 +116,9 @@ def handle_assignment(node):
         check_symbol = check_symbol_table(var_name)
         if not check_symbol:
             print(f"Undeclared variable '{var_name}'")
-            raise ValueError(f"Undeclared variable '{var_name}'")
         else:
-            var_type, _, is_locked = symbol_table[var_name]
-            if is_locked:
+            var_type, old_value, is_locked = symbol_table[var_name]
+            if is_locked and old_value is not None:
                 print(f"Cannot reassign locked variable '{var_name}'")
                 raise ValueError(f"Cannot reassign locked variable '{var_name}'")
             else:
@@ -126,8 +130,6 @@ def handle_assignment(node):
                     print(
                         f"Type mismatch for variable '{var_name}' expected '{var_type}'"
                     )
-                    raise ValueError(f"Type mismatch for variable '{var_name}'")
-
     else:
         raise ValueError("Invalid assignment")
 
