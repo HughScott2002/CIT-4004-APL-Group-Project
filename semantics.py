@@ -111,11 +111,12 @@ def handle_assignment(node):
         check_symbol = check_symbol_table(var_name)
         if not check_symbol:
             print(f"Undeclared variable '{var_name}'")
-            # raise ValueError(f"Undeclared variable '{var_name}'")
+            raise ValueError(f"Undeclared variable '{var_name}'")
         else:
             var_type, _, is_locked = symbol_table[var_name]
             if is_locked:
                 print(f"Cannot reassign locked variable '{var_name}'")
+                raise ValueError(f"Cannot reassign locked variable '{var_name}'")
             else:
                 type_check = type_checking(var_type, value)
                 if type_check:
@@ -125,6 +126,8 @@ def handle_assignment(node):
                     print(
                         f"Type mismatch for variable '{var_name}' expected '{var_type}'"
                     )
+                    raise ValueError(f"Type mismatch for variable '{var_name}'")
+
     else:
         raise ValueError("Invalid assignment")
 
