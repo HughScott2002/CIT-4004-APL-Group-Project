@@ -8,12 +8,12 @@ import ply.lex as lex
 symbol_table = {}
 
 
-def add_to_symbol_table(var_name, var_type, var_value=None):
+def add_to_symbol_table(var_name, var_type, var_value=None, is_locked=False):
     if var_name in symbol_table:
         # print(f"Variable '{var_name}' is already declared")
         # raise ValueError(f"Variable '{var_name}' is already declared")
         return False
-    symbol_table[var_name] = (var_type, var_value)
+    symbol_table[var_name] = (var_type, var_value, is_locked)
     return True
 
 
@@ -78,18 +78,22 @@ def semantic_analyzer(ast):
 def handle_declaration(node):
     if len(node) == 4:
         var_mut, var_type, var_name = node[1][1], node[2], node[3]
+        is_locked = var_mut == "lock"
         # type_checking(var_type, None)
-        check_symbol = add_to_symbol_table(var_name, var_type)
+        check_symbol = add_to_symbol_table(var_name, var_type, None, is_locked)
         if check_symbol:
             print(f"Declared '{var_mut}' variable '{var_name}' of type '{var_type}'")
         else:
             print(f"Variable '{var_name}' is already declared")
     elif len(node) == 5:
         var_mut, var_type, var_name, value = node[1][1], node[2], node[3], node[4]
+        is_locked = var_mut == "lock"
+        # Checks if the type is correct
         type_check = type_checking(var_type, value)
         if not type_check:
             print(f"Error in type checking for '{var_name}'")
-        check_symbol = add_to_symbol_table(var_name, var_type, value)
+        # Adds to the symbol table or sends back false
+        check_symbol = add_to_symbol_table(var_name, var_type, None, is_locked)
         if check_symbol:
             print(f"'{var_name}' added to symbol table")
         else:
@@ -109,13 +113,18 @@ def handle_assignment(node):
             print(f"Undeclared variable '{var_name}'")
             # raise ValueError(f"Undeclared variable '{var_name}'")
         else:
-            var_type, _ = symbol_table[var_name]
-            type_check = type_checking(var_type, value)
-            if type_check:
-                symbol_table[var_name] = (var_type, value)
-                print(f"Assigned value '{value}' to variable '{var_name}'")
+            var_type, _, is_locked = symbol_table[var_name]
+            if is_locked:
+                print(f"Cannot reassign locked variable '{var_name}'")
             else:
-                print(f"Type mismatch for variable '{var_name}' expected '{var_type}'")
+                type_check = type_checking(var_type, value)
+                if type_check:
+                    symbol_table[var_name] = (var_type, value, is_locked)
+                    print(f"Assigned value '{value}' to variable '{var_name}'")
+                else:
+                    print(
+                        f"Type mismatch for variable '{var_name}' expected '{var_type}'"
+                    )
     else:
         raise ValueError("Invalid assignment")
 

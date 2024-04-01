@@ -20,8 +20,9 @@ def main():
     print("Parsing the source code:")
     ast = parser.parse(shortdata)
     print(ast)
-    print("*" * 50)
+
     # # Semantic Analysis
+    print("*" * 50)
     print("*" * 50)
     print("Performing Semantic Analysis:")
     semantic_analyzer(ast)
