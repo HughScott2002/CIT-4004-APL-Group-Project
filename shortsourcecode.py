@@ -31,4 +31,21 @@ abstract IS_B_GREATER_THAN_A(){
    lock bool _Inside_Abstract = true@   
 }
 hail IS_B_GREATER_THAN_A()@
+
+if _A > _B{
+    scribe("a is greater than b")@
+} else {
+    scribe("b is greater than a")@
+}
+if 1 > 2 {
+    scribe("1 is greater than 2")@
+} elif 1 < 2{
+    scrible("1 is less than 2")@
+}
+if (_BINARY == true){
+    scibe("This is true")@
+}
+else{
+    scibe("This is false")@
+}
 """

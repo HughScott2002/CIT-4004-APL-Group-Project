@@ -203,6 +203,7 @@ def handle_abstract_function_declaration(node):
     # semantic_analyzer(node[2])
 
 
+# Handles abstract function call
 def handle_abstract_call(node):
     check_table = check_symbol_table(node[1])
     if check_table:
