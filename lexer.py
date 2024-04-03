@@ -126,10 +126,17 @@ tokens = [
     "IDENTIFIER",
     "FUNCTIONID",
     "VISIBILITY",
-    "ADDRESS_LITERAL",
+    # "ADDRESS_LITERAL",
     "STRING_LITERAL",
     "TYPE_SPECIFIER",
     "NOT",
+    "POWER",  # Added POWER token
+    "BITWISEAND",  # Added BITWISEAND token
+    "BITWISEOR",  # Added BITWISEOR token
+    "BITWISEXOR",  # Added BITWISEXOR token
+    "SHIFTLEFT",  # Added SHIFTLEFT token
+    "SHIFTRIGHT",  # Added SHIFTRIGHT token
+    "BITWISEINVERT",  # Added BITWISEINVERT token
 ] + list(reserved_word.values())
 
 # Ignored characters
@@ -157,6 +164,13 @@ t_LPAREN = r"\("
 t_RPAREN = r"\)"
 t_LBRACE = r"\{"
 t_RBRACE = r"\}"
+t_POWER = r"\*\*"  # Added regular expression for POWER token
+t_BITWISEAND = r"&"  # Added regular expression for BITWISEAND token
+t_BITWISEOR = r"\|"  # Added regular expression for BITWISEOR token
+t_BITWISEXOR = r"\^"  # Added regular expression for BITWISEXOR token
+t_SHIFTLEFT = r"<<"  # Added regular expression for SHIFTLEFT token
+t_SHIFTRIGHT = r">>"  # Added regular expression for SHIFTRIGHT token
+t_BITWISEINVERT = r"~"  # Added regular expression for BITWISEINVERT token
 
 
 # Define a function identifier token
@@ -198,24 +212,6 @@ def t_IDENTIFIER(t):
     return t
 
 
-# def t_IDENTIFIER(t):
-#     r"_?[a-zA-Z][a-zA-Z_0-9]*"
-#     if t.value.startswith("_"):
-#         t.type = "IDENTIFIER"
-#     elif t.value in reserved_word:
-#         t.type = reserved_word[t.value]
-#     return t
-
-
-# def t_keyword(t):
-#     r"[A-Z][a-zA-Z]*"
-#     if t.value in reserved_word:
-#         t.type = reserved_word[t.value]
-#     else:
-#         t.type = "IDENTIFIER"
-#     return t
-
-
 # Regular expression rule for floats
 def t_FLOAT(t):
     r"\d+\.\d+"
@@ -227,21 +223,6 @@ def t_FLOAT(t):
 def t_INTEGER(t):
     r"\d+"
     t.value = int(t.value)
-    return t
-
-
-# # Regular expression rule for floats
-# def t_FLOAT(t):
-#     r"\d+\.\d*"
-#     t.value = float(t.value)
-#     return t
-
-
-# Define an address literal token
-def t_ADDRESS_LITERAL(t):
-    r'"0x[a-fA-F0-9]{40}"|"[a-fA-F0-9]{64}"'
-    t.value = t.value[1:-1]  # Extract the actual address value
-    t.type = "ADDRESS_LITERAL"
     return t
 
 
@@ -284,9 +265,42 @@ def t_error(t):
 # Build the lexer
 lexer = lex.lex()
 
+# def t_IDENTIFIER(t):
+#     r"_?[a-zA-Z][a-zA-Z_0-9]*"
+#     if t.value.startswith("_"):
+#         t.type = "IDENTIFIER"
+#     elif t.value in reserved_word:
+#         t.type = reserved_word[t.value]
+#     return t
+
+
+# def t_keyword(t):
+#     r"[A-Z][a-zA-Z]*"
+#     if t.value in reserved_word:
+#         t.type = reserved_word[t.value]
+#     else:
+#         t.type = "IDENTIFIER"
+#     return t
+
+
+# # Regular expression rule for floats
+# def t_FLOAT(t):
+#     r"\d+\.\d*"
+#     t.value = float(t.value)
+#     return t
+
+
+# Define an address literal token
+# def t_ADDRESS_LITERAL(t):
+#     r'"0x[a-fA-F0-9]{40}"|"[a-fA-F0-9]{64}"'
+#     t.value = t.value[1:-1]  # Extract the actual address value
+#     t.type = "ADDRESS_LITERAL"
+#     return t
+
+
 # Test the lexer
 
-# lexer.input(shortdata)
+lexer.input(shortdata)
 
 # for token in lexer:
 #     print("*********************************")
