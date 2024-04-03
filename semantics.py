@@ -4,6 +4,7 @@
 
 # Symobol Table
 from typing import Union
+from SymbolTable import symbol_table, add_to_symbol_table, check_symbol_table
 
 # Scope Stack
 # scope_stack = []
@@ -18,7 +19,6 @@ from typing import Union
 
 
 # Symbol Table
-symbol_table = {}
 
 
 def semantic_analyzer(ast):
@@ -102,52 +102,33 @@ def semantic_analyzer(ast):
 #         handle_conditionals(node, current_scope)
 
 
-# Add to the symbol table
-def add_to_symbol_table(
-    var_name, var_type, var_value=None, is_locked=True, symbol_type="variable"
-):
-    check_table = check_symbol_table(var_name)
-    if check_table:
-        return False
-    else:
-        symbol_table[var_name] = (var_type, var_value, is_locked, symbol_type)
-    return True
-
-
-# Check if the variable is in the symbol table
-def check_symbol_table(var_name):
-    if var_name in symbol_table:
-        return True
-    return False
-
-
 # Type checking
 def type_checking(var_type, value):
     if var_type == "int":
         if not isinstance(value, int):
-            print(f"Expected an integer, got '{value}'")
-            # raise ValueError(f"Expected an integer, got '{value}'")
+            print(f"Expected an integer, got type '{type(value).__name__}'")
+            # raise ValueError(f"Expected an integer, got '{type(value).__name__}'")
             return False
         else:
             return True
     elif var_type == "float":
         if not isinstance(value, float):
-            print(f"Expected a float, got '{value}'")
-            # raise ValueError(f"Expected a float, got '{value}'")
+            print(f"Expected a float, got '{type(value).__name__}'")
+            # raise ValueError(f"Expected a float, got '{type(value).__name__}'")
             return False
         else:
             return True
     elif var_type == "bool":
         if not isinstance(value, bool):
-            print(f"Expected a boolean, got '{value}'")
-            # raise ValueError(f"Expected a boolean, got '{value}'")
+            print(f"Expected a boolean, got '{type(value).__name__}'")
+            # raise ValueError(f"Expected a boolean, got '{type(value).__name__}'")
             return False
         else:
             return True
     elif var_type == "string":
         if not isinstance(value, str):
-            print(f"Expected a string, got '{value}'")
-            # raise ValueError(f"Expected a string, got '{value}'")
+            print(f"Expected a string, got '{type(value).__name__}'")
+            # raise ValueError(f"Expected a string, got '{type(value).__name__}'")
             return False
         else:
             return True
@@ -155,6 +136,99 @@ def type_checking(var_type, value):
         print(f"Unknown type '{var_type}'")
         # raise ValueError(f"Unknown type '{var_type}'")
         return False
+
+
+def handle_expression(node):
+    if isinstance(node, tuple):
+        if node[0] == "add":
+            left_operand = handle_expression(node[1])
+            right_operand = handle_expression(node[2])
+            result = left_operand + right_operand
+            print(left_operand, right_operand, result)
+            return result
+        elif node[0] == "sub":
+            left_operand = handle_expression(node[1])
+            right_operand = handle_expression(node[2])
+            result = left_operand - right_operand
+            print(left_operand, right_operand, result)
+            return result
+        elif node[0] == "mul":
+            left_operand = handle_expression(node[1])
+            right_operand = handle_expression(node[2])
+            result = left_operand * right_operand
+            print(left_operand, right_operand, result)
+            return result
+        elif node[0] == "div":
+            left_operand = handle_expression(node[1])
+            right_operand = handle_expression(node[2])
+            result = left_operand / right_operand
+            print(left_operand, right_operand, result)
+            return result
+        elif node[0] == "power":
+            left_operand = handle_expression(node[1])
+            right_operand = handle_expression(node[2])
+            result = left_operand**right_operand
+            print(left_operand, right_operand, result)
+            return result
+        elif node[0] == "not":
+            # Check if the operand is a primitive type
+            operand = handle_expression(node[1])
+            if not isinstance(operand, bool):
+                # print(f"Expected a boolean, got '{type(operand).__name__}'")
+                raise ValueError(f"Expected a boolean, got '{type(operand).__name__}'")
+            result = not operand
+            print(operand, result)
+            return result
+        elif node[0] == "equivalent":
+            left_operand = handle_expression(node[1])
+            right_operand = handle_expression(node[2])
+            result = left_operand == right_operand
+            print(left_operand, right_operand, result)
+            return result
+        elif node[0] == "greater_than":
+            left_operand = handle_expression(node[1])
+            right_operand = handle_expression(node[2])
+            result = left_operand > right_operand
+            print(left_operand, right_operand, result)
+            return result
+        elif node[0] == "less_than":
+            left_operand = handle_expression(node[1])
+            right_operand = handle_expression(node[2])
+            result = left_operand < right_operand
+            print(left_operand, right_operand, result)
+            return result
+        elif node[0] == "not_equal":
+            left_operand = handle_expression(node[1])
+            right_operand = handle_expression(node[2])
+            result = left_operand != right_operand
+            print(left_operand, right_operand, result)
+            return result
+        elif node[0] == "less_than_or_equal":
+            left_operand = handle_expression(node[1])
+            right_operand = handle_expression(node[2])
+            result = left_operand <= right_operand
+            print(left_operand, right_operand, result)
+            return result
+        elif node[0] == "greater_than_or_equal":
+            left_operand = handle_expression(node[1])
+            right_operand = handle_expression(node[2])
+            result = left_operand >= right_operand
+            print(left_operand, right_operand, result)
+            return result
+    else:
+        # Check if the node is a string
+        if isinstance(node, str):
+            # Check is the node is a variable
+            if node[0] == "_":
+                # If the node is a variable, check if it is in the symbol table
+                check = check_symbol_table(node)
+                if not check:
+                    print(f"Undeclared variable '{node}'")
+                    raise ValueError(f"Undeclared variable '{node}'")
+                var_type, value, is_locked, symbol_type = symbol_table[node]
+                return value
+        # print("before return", node)
+        return node
 
 
 # Handles declarations
@@ -173,7 +247,11 @@ def handle_declaration(node):
         var_mut, var_type, var_name, value = node[1][1], node[2], node[3], node[4]
         is_locked = var_mut == "lock"
         # Checks if the type is correct
+        value = handle_expression(value)
         type_check = type_checking(var_type, value)
+        if not type_check:
+            raise ValueError(f"Expected an {var_type}, got '{type(value).__name__}'")
+            # raise ValueError(f"Cannot assign locked variable '{var_name}'")
         if not type_check:
             print(f"The variable '{var_name}' recived the wrong type")
             raise ValueError(f"Cannot assign locked variable '{var_name}'")
@@ -196,6 +274,7 @@ def handle_declaration(node):
 def handle_assignment(node):
     if len(node) == 4:
         var_name, value = node[1], node[3]
+        value = handle_expression(value)
         check_symbol = check_symbol_table(var_name)
         if not check_symbol:
             print(f"Undeclared variable '{var_name}'")
@@ -207,6 +286,11 @@ def handle_assignment(node):
                 raise ValueError(f"Cannot reassign locked variable '{var_name}'")
             else:
                 type_check = type_checking(var_type, value)
+                if not type_check:
+                    raise ValueError(
+                        f"Expected an {var_type}, got '{type(value).__name__}'"
+                    )
+                    # raise ValueError(f"Cannot assign locked variable '{var_name}'")
                 if type_check:
                     symbol_table[var_name] = (var_type, value, is_locked, symbol_type)
                     print(f"Assigned value '{value}' to variable '{var_name}'")
@@ -246,13 +330,13 @@ def handle_attempt_findout_block(node):
 
 # Handles attempt block
 def handle_attempt_block(node):
-    print(node[1])
+    # print(node[1])
     semantic_analyzer(node[1])
 
 
 # Handles findout block
 def handle_findout_block(node):
-    print(node)
+    # print(node)
     semantic_analyzer(node[2])
 
 

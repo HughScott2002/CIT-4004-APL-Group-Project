@@ -34,6 +34,7 @@ def main():
     print("*" * 50)
     print("Performing Semantic Analysis:")
     semantic_analyzer(ast)
+    # print(ast)
     print("*" * 50)
 
     # # Code Generation

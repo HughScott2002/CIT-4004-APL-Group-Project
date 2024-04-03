@@ -45,12 +45,7 @@ def p_declaration_with_assignment(p):
     """
     declaration : mutex type IDENTIFIER EQUAL expression LINEEND
     """
-    if isinstance(p[5], tuple):
-        print("Delclaration Is tuple")
-        p[0] = ("declaration", p[1], p[2], p[3], p[5])  # Evaluated expression
-    else:
-        print("Delclaration Is not tuple")
-        p[0] = ("declaration", p[1], p[2], p[3], p[5])  # Literal value
+    p[0] = ("declaration", p[1], p[2], p[3], p[5])  # Literal value
 
 
 def p_declaration_without_assignment(p):
@@ -63,10 +58,7 @@ def p_assignment(p):
     """
     assignment : IDENTIFIER EQUAL expression LINEEND
     """
-    if isinstance(p[3], tuple):
-        p[0] = ("assignment", p[1], p[3][1])
-    else:
-        p[0] = ("assignment", p[1], p[2], p[3])
+    p[0] = ("assignment", p[1], p[2], p[3])
 
 
 # ABSTRACT_CALL
@@ -180,14 +172,14 @@ def p_expression(p):
         ("left", "SHIFTLEFT", "SHIFTRIGHT"),
     )
     if len(p) == 4:
-        if isinstance(p[2], tuple):
-            print("is a tuple")
-            print(p[1])
-            print(p[2])
-            print(p[3])
-            if p[2][0] == "add":
-                p[0] = ("add", p[1], p[3])
-            # p[0] = p[0]
+        # if isinstance(p[2], tuple):
+        #     print("is a tuple")
+        #     print(p[1])
+        #     print(p[2])
+        #     print(p[3])
+        #     if p[2][0] == "add":
+        #         p[0] = ("add", p[1], p[3])
+        # p[0] = p[0]
         if p[2] == "+":
             p[0] = ("add", p[1], p[3])
         elif p[2] == "-":
@@ -221,7 +213,7 @@ def p_expression(p):
         elif p[2] == ">>":
             p[0] = ("shift_right", p[1], p[3])
         # print(type(p[2]))
-        print(p[2])
+        # print(p[2])
     elif len(p) == 3:
         if p[1] == "!":
             p[0] = ("not", p[2])
