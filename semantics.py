@@ -4,21 +4,7 @@
 
 # Symobol Table
 from typing import Union
-from SymbolTable import symbol_table, add_to_symbol_table, check_symbol_table
-
-# Scope Stack
-# scope_stack = []
-
-
-# def enter_scope():
-#     scope_stack.append({})
-
-
-# def exit_scope():
-#     scope_stack.pop()
-
-
-# Symbol Table
+from SymbolTable import *
 
 
 def semantic_analyzer(ast):
@@ -80,49 +66,36 @@ def semantic_analyzer(ast):
     # exit_scope()
 
 
-# def handle_in_scope(node):
-#     # current_scope = scope_stack[-1]
-#     if node[0] == "declaration":
-#         handle_declaration(node, current_scope)
-#     elif node[0] == "assignment":
-#         handle_assignment(node, current_scope)
-#     elif node[0] == "abstract_function_declaration":
-#         handle_abstract_function_declaration(node, current_scope)
-
-
-# def handle_out_of_scope(node):
-#     current_scope = scope_stack[-1]
-#     if node[0] == "print_statement":
-#         handle_print_statement(node, current_scope)
-#     elif node[0] == "attempt_findout_block":
-#         handle_attempt_findout_block(node, current_scope)
-#     elif node[0] == "abstract_call":
-#         handle_abstract_call(node, current_scope)
-#     elif node[0] == "conditionals":
-#         handle_conditionals(node, current_scope)
-
-
 # Type checking
 def type_checking(var_type, value):
     if var_type == "int":
-        if not isinstance(value, int):
-            print(f"Expected an integer, got type '{type(value).__name__}'")
-            # raise ValueError(f"Expected an integer, got '{type(value).__name__}'")
+        # print("Hit")
+        # print(type(value))
+        if type(value) != int:
             return False
+        # if not isinstance(value, int):
+        # print(f"Expected an integer, got type '{type(value).__name__}'")
+        # raise ValueError(f"Expected an integer, got '{type(value).__name__}'")
+        # return False
         else:
             return True
     elif var_type == "float":
-        if not isinstance(value, float):
+        if type(value) != float:
             print(f"Expected a float, got '{type(value).__name__}'")
-            # raise ValueError(f"Expected a float, got '{type(value).__name__}'")
             return False
+        # if not isinstance(value, float):
+        #     # raise ValueError(f"Expected a float, got '{type(value).__name__}'")
+        #     return False
         else:
             return True
     elif var_type == "bool":
-        if not isinstance(value, bool):
+        if type(value) != bool:
             print(f"Expected a boolean, got '{type(value).__name__}'")
-            # raise ValueError(f"Expected a boolean, got '{type(value).__name__}'")
             return False
+        # if not isinstance(value, bool):
+        #     print(f"Expected a boolean, got '{type(value).__name__}'")
+        #     # raise ValueError(f"Expected a boolean, got '{type(value).__name__}'")
+        #     return False
         else:
             return True
     elif var_type == "string":
@@ -138,6 +111,7 @@ def type_checking(var_type, value):
         return False
 
 
+# Handles expressions
 def handle_expression(node):
     if isinstance(node, tuple):
         if node[0] == "add":
@@ -215,6 +189,8 @@ def handle_expression(node):
             result = left_operand >= right_operand
             print(left_operand, right_operand, result)
             return result
+    elif node == None:
+        return node
     else:
         # Check if the node is a string
         if isinstance(node, str):
@@ -246,26 +222,36 @@ def handle_declaration(node):
     elif len(node) == 5:
         var_mut, var_type, var_name, value = node[1][1], node[2], node[3], node[4]
         is_locked = var_mut == "lock"
-        # Checks if the type is correct
+        check_if_variable_exists = check_symbol_table(var_name)
+        if check_if_variable_exists:
+            if is_locked:
+                # print(f"Cannot reassign locked variable '{var_name}'")
+                raise ValueError(f"Cannot reassign locked variable '{var_name}'")
+            # print(f"Variable '{var_name}' is already declared")
+            raise ValueError(f"Variable '{var_name}' is already declared")
+        # Handles any expressions
         value = handle_expression(value)
+        # Checks if the type is correct
         type_check = type_checking(var_type, value)
         if not type_check:
             raise ValueError(f"Expected an {var_type}, got '{type(value).__name__}'")
             # raise ValueError(f"Cannot assign locked variable '{var_name}'")
-        if not type_check:
-            print(f"The variable '{var_name}' recived the wrong type")
-            raise ValueError(f"Cannot assign locked variable '{var_name}'")
+        # Checks if the variable is locked
+        # if is_locked:
+        #     raise ValueError(f"Cannot assign locked variable '{var_name}'")
         # Adds to the symbol table or sends back false
         check_symbol = add_to_symbol_table(var_name, var_type, value, is_locked)
         if check_symbol:
             print(f"'{var_name}' added to symbol table")
             print(symbol_table)
-        else:
-            print(f"Variable '{var_name}' is already declared")
-            raise ValueError(f"Variable '{var_name}' is already declared")
         print(
             f"Declared '{var_mut}' variable '{var_name}' of type '{var_type}' with value '{value}'"
         )
+        # print("This is node[4]")
+        # print(node[4])
+        # print("This is value")
+        # print(value)
+        # node[4] = value
     else:
         raise ValueError("Invalid declaration")
 
@@ -306,6 +292,7 @@ def handle_assignment(node):
         raise ValueError("Invalid assignment")
 
 
+# TODO: Fix the print statement so it accepts variables
 # Handles print statements
 def handle_print_statement(node):
     if node[2] != "@":
@@ -350,26 +337,30 @@ def handle_abstract_function_declaration(node):
     else:
         # enter_scope()
         add_to_symbol_table(node[1], None, node[3], True, "function")
+        add_to_abstract_function_symbol_table(node[1], node[2], node[3])
         print(f"Declared function '{node[1]}'")
-        print(symbol_table)
+        # print(symbol_table)
         # exit_scope()
     # print(node)
     # semantic_analyzer(node[2])
 
 
+def handle_parameter_declaration(node):
+    pass
+
+
 # TODO: Implement parameter and argument declaration
 # Handles abstract function call
 def handle_abstract_call(node):
-    check_table = check_symbol_table(node[1])
+    check_table = check_abstract_function_symbol_table(node[1])
+    print(function_symbol_table)
     if check_table:
-        var_type, value, is_locked, symbol_type = symbol_table[node[1]]
-        if symbol_type == "function":
-            # enter_scope()
-            semantic_analyzer(value)
-            # exit_scope()
-        else:
-            print(f"'{node[1]}' is not a function")
-            raise ValueError(f"'{node[1]}' is not a function")
+        # var_type, value, is_locked, symbol_type = symbol_table[node[1]]
+        params, value = function_symbol_table[node[1]]
+        # if symbol_type == "function":
+        # enter_scope()
+        semantic_analyzer(value)
+        # exit_scope()
     else:
         print(f"Function '{node[1]}' is not declared")
         raise ValueError(f"Function '{node[1]}' is not declared")
@@ -377,6 +368,90 @@ def handle_abstract_call(node):
 
 # Handles conditionals
 def handle_conditionals(node):
+    if node[1][0] == "if":
+        helper_handle_if(node[1])
+    elif node[1][0] == "if_elif":
+        handle_if_elif(node[1])
+    elif node[1][0] == "if_else":
+        handle_if_else(node[1])
+    elif node[1][0] == "if_elif_else":
+        handle_if_elif_else(node[1])
+    elif node[1][0] == "aslongas_statement":
+        handle_aslongas(node[1])
+    elif node[1][0] == "for_loop":
+        handle_for_loop(node[1])
+    else:
+        raise ValueError("Invalid conditional")
+
+
+def handle_if_elif(node):
+    ifstatement = node[1]
+    helper_handle_if(ifstatement)
+    elifstatement = node[2]
+    helper_handle_elif(elifstatement)
     print(node)
-    pass
-    # print(node)
+
+
+def handle_if_else(node):
+    ifstatement = node[1]
+    helper_handle_if(ifstatement)
+    helper_handle_else(node[2])
+    print(node)
+
+
+def handle_if_elif_else(node):
+    ifstatement = node[1]
+    helper_handle_if(ifstatement)
+    helper_handle_elif(node[2])
+    helper_handle_else(node[3])
+    print(node)
+
+
+def helper_handle_if(node):
+    expression = handle_expression(node[1])
+    print(expression)
+    if isinstance(expression, bool):
+        semantic_analyzer(node[2])
+    else:
+        raise ValueError("Expected a boolean expression in IF statement")
+
+
+def helper_handle_elif(node):
+    expression = handle_expression(node[1])
+    print(expression)
+    if isinstance(expression, bool):
+        semantic_analyzer(node[2])
+    else:
+        raise ValueError("Expected a boolean expression in ELIF statement")
+
+
+def helper_handle_else(node):
+    semantic_analyzer(node[1])
+
+
+def handle_aslongas(node):
+    expression = handle_expression(node[1])
+    print(expression)
+    if type(expression) == bool:
+        semantic_analyzer(node[2])
+    else:
+        raise ValueError("Expected a boolean expression in ASLONGAS statement")
+
+
+# Handles for loops
+# TODO: Handle the identifier in the for loop, they need to local scope and be removed after the loop
+# TODO: Handle the arguments in the for loop, they need to be added to the symbol table and removed after the loop
+def handle_for_loop(node):
+    if node[1] == "range":
+        print("Range")
+        for x in node[3]:
+            add = add_to_symbol_table(x[0], type(x[1]).__name__, x[1], "for_argument")
+            if add:
+                print(f"Added '{x[0]}' to symbol table")
+                semantic_analyzer(node[4])
+    elif node[1] == "in":
+        # TODO: Add scope so that the variable declared in the for loop is removed after the loop and is used within the for loop
+        semantic_analyzer(node[4])
+        print("In")
+    else:
+        raise ValueError("Invalid for loop")

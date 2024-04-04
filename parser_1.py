@@ -5,6 +5,7 @@ from sourcecode import data as longdata
 from shortsourcecode import data as shortdata
 
 
+# Parsing rules
 def p_program(p):
     """
     program : statements
@@ -12,6 +13,7 @@ def p_program(p):
     p[0] = p[1]
 
 
+# STATEMENTS
 def p_statements(p):
     """
     statements : statement statements
@@ -21,10 +23,6 @@ def p_statements(p):
         p[0] = [p[1]] + p[2]
     else:
         p[0] = []
-
-
-#   | attempt_block
-#   | findout_block
 
 
 def p_statement(p):
@@ -41,6 +39,7 @@ def p_statement(p):
     p[0] = p[1]
 
 
+# DECLARATIONS
 def p_declaration_with_assignment(p):
     """
     declaration : mutex type IDENTIFIER EQUAL expression LINEEND
@@ -69,7 +68,7 @@ def p_abstract_call(p):
     p[0] = ("abstract_call", p[2], p[4])
 
 
-# ABSTRACT_FUNCTION_DECLARATION
+# ABSTRACT FUNCTION DECLARATION
 def p_abstract_function_declaration(p):
     """
     abstract_function_declaration : ABSTRACT FUNCTIONID LPAREN parameters RPAREN LBRACE statements RBRACE
@@ -77,7 +76,7 @@ def p_abstract_function_declaration(p):
     p[0] = ("abstract_function_declaration", p[2], p[4], p[7])
 
 
-# PRINT_STATEMENT
+# PRINT STATEMENT
 def p_print_statement(p):
     """
     print_statement : SCRIBE LPAREN STRING_LITERAL COMMA IDENTIFIER RPAREN LINEEND
@@ -94,16 +93,10 @@ def p_conditionals(p):
                  | for_statement
                  | aslongas_statement
     """
-    p[0] = p[1]
+    p[0] = ("conditionals", p[1])
 
 
-def p_for_statement(p):
-    """
-    for_statement : FOR IDENTIFIER IN RANGE LPAREN expression RPAREN LBRACE statements RBRACE
-    """
-    p[0] = ("for_loop", p[2], p[6], p[9])
-
-
+# IF_ELIF_ELSE
 def p_if_statement(p):
     """
     if_statement : IF expression LBRACE statements RBRACE
@@ -111,23 +104,59 @@ def p_if_statement(p):
                  | IF expression LBRACE statements RBRACE ELIF expression LBRACE statements RBRACE
                  | IF expression LBRACE statements RBRACE ELIF expression LBRACE statements RBRACE ELSE LBRACE statements RBRACE
     """
+    print(len(p))
     if len(p) == 6:
         p[0] = ("if", p[2], p[4])
-    elif len(p) == 9:
-        if p[6] == "ELSE":
-            p[0] = ("if_else", p[2], p[4], p[8])
-        else:
-            p[0] = ("if_elif", p[2], p[4], p[7])
+    elif len(p) == 10:
+        print(p[6])
+        if p[6] == "else":
+            # print(p[9])
+            # print(p[8])
+            # print(p[7])
+            p[0] = ("if_else", ("if", p[2], p[4]), ("else", p[8]))
     elif len(p) == 11:
-        p[0] = ("if_elif_else", p[2], p[4], p[7], p[10])
+        p[0] = ("if_elif", ("if", p[2], p[4]), ("elif", p[7], p[9]))
+    elif len(p) == 15:
+        p[0] = (
+            "if_elif_else",
+            ("if", p[2], p[4]),
+            ("elif", p[7], p[9]),
+            ("else", p[13]),
+        )
+
+
+# FOR_BLOCK
+def p_for_statement(p):
+    """
+    for_statement : FOR IDENTIFIER IN RANGE LPAREN arguments RPAREN LBRACE statements RBRACE
+    """
+    p[0] = ("for_loop", "range", p[2], p[6], p[9])
+
+
+def p_for_statement_with_identifiers(p):
+    """
+    for_statement : FOR IDENTIFIER IN iterables LBRACE statements RBRACE
+    """
+    p[0] = ("for_loop", "in", p[2], p[4], p[6])
+
+
+def p_iterables(p):
+    """
+    iterables : STRING_LITERAL
+              | IDENTIFIER
+    """
+    p[0] = p[1]
+
+
+# ASLONGAS_BLOCK
+def p_aslongas_statement(p):
+    """
+    aslongas_statement : ASLONGAS expression LBRACE statements RBRACE
+    """
+    p[0] = ("aslongas_statement", p[2], p[4])
 
 
 # EXPRESSION
-# def p_expression_uminus(p):
-#     "expression : MINUS expression %prec UMINUS"
-#     p[0] = -p[2]
-
-
 def p_expression_group(p):
     "expression : LPAREN expression RPAREN"
     p[0] = p[2]
@@ -237,6 +266,7 @@ def p_expression(p):
     # # print(p[0])
 
 
+# ATTEMPT_FINDOUT_BLOCK
 def p_attempt_findout_block(p):
     """
     attempt_findout_block : attempt_block findout_block
@@ -258,14 +288,6 @@ def p_findout_block(p):
     findout_block : FINDOUT error_type LBRACE statements RBRACE
     """
     p[0] = ("findout_block", p[2], p[4])
-
-
-# ASLONGAS_BLOCK
-def p_aslongas_statement(p):
-    """
-    aslongas_statement : ASLONGAS expression LBRACE statements RBRACE
-    """
-    p[0] = ("aslongas_statement", p[2], p[4])
 
 
 def p_error_type(p):
@@ -369,6 +391,7 @@ def p_arguments(p):
 def p_argument(p):
     """
     argument : IDENTIFIER
+        | expression
     """
     p[0] = ("argument_declaration", p[1])
 
