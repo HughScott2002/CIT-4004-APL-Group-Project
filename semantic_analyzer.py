@@ -576,21 +576,21 @@ def handle_abstract_call(node, current_scope):
 
 
 # # Handles conditionals
-def handle_conditionals(node):
-    if node[1][0] == "if":
-        helper_handle_if(node[1])
-    elif node[1][0] == "if_elif":
-        handle_if_elif(node[1])
-    elif node[1][0] == "if_else":
-        handle_if_else(node[1])
-    elif node[1][0] == "if_elif_else":
-        handle_if_elif_else(node[1])
-    elif node[1][0] == "aslongas_statement":
-        handle_aslongas(node[1])
-    elif node[1][0] == "for_loop":
-        handle_for_loop(node[1])
-    else:
-        raise ValueError("Invalid conditional")
+# def handle_conditionals(node):
+#     if node[1][0] == "if":
+#         helper_handle_if(node[1])
+#     elif node[1][0] == "if_elif":
+#         handle_if_elif(node[1])
+#     elif node[1][0] == "if_else":
+#         handle_if_else(node[1])
+#     elif node[1][0] == "if_elif_else":
+#         handle_if_elif_else(node[1])
+#     elif node[1][0] == "aslongas_statement":
+#         handle_aslongas(node[1])
+#     elif node[1][0] == "for_loop":
+#         handle_for_loop(node[1])
+#     else:
+#         raise ValueError("Invalid conditional")
 
 
 # def handle_if_elif(node):
