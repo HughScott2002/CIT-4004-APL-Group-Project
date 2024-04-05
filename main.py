@@ -1,16 +1,15 @@
-import ply.yacc as yacc
-from lexer import tokens
-
+from symbol_table import *
 from parser_1 import parser
-from semantics import semantic_analyzer
+from semantic_analyzer import semantic_analyzer
 from code_generator import generate_code
 
 # TODO: Add arithmetic operations to the language (Done)
 # TODO: Make sure you can assign a variable to another variable (Done)
 # TODO: Add conditionals to the language (DONE)
-# TODO: Add params and args to the language (Done)
-# TODO: Add arrays and lists to the language
 # TODO: Add scope and binding to the language
+# TODO: Add params and args to the language
+# TODO: Add function return types to the language
+# TODO: Add arrays and lists to the language
 # TODO: Finish the code generator
 # TODO: Create custom errors for the language
 
@@ -19,23 +18,20 @@ def main():
     # Get the source code
     from sourcecode import data as longdata
     from shortsourcecode import data as shortdata
-    from AST import ast
 
-    # Lexing
-    # print(tokens)
+    # Create a global symbol table
+    global_symbol_table = SymbolTable()
 
-    # Parsing
-    # parser = yacc.yacc()
     print("*" * 50)
     print("Parsing the source code:")
-    ast = parser.parse(shortdata)
+    ast = parser.parse(longdata)
     print(ast)
     print("*" * 50)
 
     # Semantic Analysis
     print("*" * 50)
     print("Performing Semantic Analysis:")
-    semantic_analyzer(ast)
+    semantic_analyzer(ast, global_symbol_table)
     # print(ast)
     print("*" * 50)
 

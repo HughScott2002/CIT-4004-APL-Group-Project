@@ -76,12 +76,32 @@ def p_abstract_function_declaration(p):
     p[0] = ("abstract_function_declaration", p[2], p[4], p[7])
 
 
-# PRINT STATEMENT
-def p_print_statement(p):
+# PRINT STATEMENTS
+def p_print_statement_string(p):
+    """
+    print_statement : SCRIBE LPAREN STRING_LITERAL RPAREN LINEEND
+
+    """
+    p[0] = ("print_statement", p[3])
+
+
+def p_print_statement_id(p):
+    """
+    print_statement : SCRIBE LPAREN IDENTIFIER RPAREN LINEEND
+    """
+    p[0] = ("print_statement", p[3])
+
+
+def p_print_statement_id_with_id(p):
+    """
+    print_statement : SCRIBE LPAREN IDENTIFIER COMMA IDENTIFIER RPAREN LINEEND
+    """
+    p[0] = ("print_statement", p[3], p[5])
+
+
+def p_print_statement_id_with_string(p):
     """
     print_statement : SCRIBE LPAREN STRING_LITERAL COMMA IDENTIFIER RPAREN LINEEND
-        | SCRIBE LPAREN STRING_LITERAL RPAREN LINEEND
-        | SCRIBE LPAREN IDENTIFIER RPAREN LINEEND
     """
     p[0] = ("print_statement", p[3], p[5])
 
@@ -432,7 +452,7 @@ def p_error(p):
 
 parser = yacc.yacc()
 
-input_data = shortdata
+input_data = longdata
 
 result = parser.parse(input_data)
 print(result)

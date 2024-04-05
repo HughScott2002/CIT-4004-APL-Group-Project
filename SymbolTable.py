@@ -60,15 +60,15 @@ def check_symbol_table(var_name):
 
 
 # Symbol table entry for variables
-class VariableSymbol:
-    def __init__(
-        self, name, var_type, value=None, is_locked=True, visibility="private"
-    ):
-        self.name = name
-        self.type = var_type
-        self.value = value
-        self.is_locked = is_locked
-        self.visibility = visibility
+# class VariableSymbol:
+#     def __init__(
+#         self, name, var_type, value=None, is_locked=True, visibility="private"
+#     ):
+#         self.name = name
+#         self.type = var_type
+#         self.value = value
+#         self.is_locked = is_locked
+#         self.visibility = visibility
 
 
 # Symbol table entry for functions
@@ -145,75 +145,3 @@ class VariableSymbol:
 
 
 # 1111
-# Symbol table entry for variables
-# class VariableSymbol:
-#     def __init__(self, name, var_type, value=None, is_locked=True, visibility="private"):
-#         self.name = name
-#         self.type = var_type
-#         self.value = value
-#         self.is_locked = is_locked
-#         self.visibility = visibility
-
-# # Symbol table entry for functions
-# class FunctionSymbol:
-#     def __init__(self, name, params, return_type, statements, visibility="private"):
-#         self.name = name
-#         self.params = params
-#         self.return_type = return_type
-#         self.statements = statements
-#         self.visibility = visibility
-
-# # Symbol table for handling nested scopes
-# class SymbolTable:
-#     def __init__(self, parent=None):
-#         self.symbols = {}
-#         self.parent = parent
-
-#     def insert(self, symbol):
-#         if symbol.name in self.symbols:
-#             raise ValueError(f"Symbol '{symbol.name}' already exists in the current scope.")
-#         self.symbols[symbol.name] = symbol
-
-#     def lookup(self, name, current_scope_only=False):
-#         symbol = self.symbols.get(name)
-#         if symbol is not None:
-#             return symbol
-#         elif not current_scope_only and self.parent:
-#             return self.parent.lookup(name)
-#         else:
-#             return None
-
-#     def update(self, name, new_symbol):
-#         if name not in self.symbols:
-#             raise ValueError(f"Symbol '{name}' does not exist in the current scope.")
-#         self.symbols[name] = new_symbol
-
-# # Global symbol table
-# global_symbol_table = SymbolTable()
-
-# # Function to create a new scope
-# def new_scope(parent=None):
-#     return SymbolTable(parent)
-
-# # Example usage
-# # Declare global variables
-# global_symbol_table.insert(VariableSymbol("global_var", "int", value=42))
-# global_symbol_table.insert(VariableSymbol("locked_var", "bool", value=True, is_locked=True))
-
-# # Declare a function
-# func_params = [VariableSymbol("x", "int"), VariableSymbol("y", "int")]
-# func_symbol = FunctionSymbol("my_func", func_params, "int", [])
-# global_symbol_table.insert(func_symbol)
-
-# # Create a new scope (e.g., inside a function)
-# local_scope = new_scope(global_symbol_table)
-
-# # Declare local variables
-# local_scope.insert(VariableSymbol("local_var", "float", value=3.14))
-# local_scope.insert(VariableSymbol("another_var", "string", value="hello"))
-
-# # Lookup symbols
-# print(local_scope.lookup("local_var").value)  # Output: 3.14
-# print(local_scope.lookup("global_var").value)  # Output: 42
-# print(local_scope.lookup("locked_var").is_locked)  # Output: True
-# print(local_scope.lookup("my_func").return_type)  # Output: int

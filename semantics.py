@@ -99,10 +99,13 @@ def type_checking(var_type, value):
         else:
             return True
     elif var_type == "string":
-        if not isinstance(value, str):
+        if type(value) != str:
             print(f"Expected a string, got '{type(value).__name__}'")
-            # raise ValueError(f"Expected a string, got '{type(value).__name__}'")
             return False
+        # if not isinstance(value, str):
+        #     print(f"Expected a string, got '{type(value).__name__}'")
+        #     # raise ValueError(f"Expected a string, got '{type(value).__name__}'")
+        #     return False
         else:
             return True
     else:

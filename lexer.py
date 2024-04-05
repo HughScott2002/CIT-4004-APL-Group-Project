@@ -265,6 +265,12 @@ def t_error(t):
 # Build the lexer
 lexer = lex.lex()
 
+# Test the lexer
+# lexer.input(shortdata)
+# for token in lexer:
+#     print(token.type)
+
+
 # def t_IDENTIFIER(t):
 #     r"_?[a-zA-Z][a-zA-Z_0-9]*"
 #     if t.value.startswith("_"):
@@ -298,10 +304,6 @@ lexer = lex.lex()
 #     return t
 
 
-# Test the lexer
-
-lexer.input(shortdata)
-
 # for token in lexer:
 #     print("*********************************")
 #     print("TOKEN TYPE: ", token.type)
@@ -309,6 +311,3 @@ lexer.input(shortdata)
 #     print("TOKEN LINE NUMBER: ", token.lineno)
 #     print("TOKEN POSITION: ", token.lexpos)
 #     print("*********************************")
-
-# for token in lexer:
-#     print(token.type)
