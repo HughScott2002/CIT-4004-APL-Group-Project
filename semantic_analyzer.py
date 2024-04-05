@@ -20,14 +20,8 @@ def semantic_analyzer(ast, current_scope):
             handle_attempt_findout_block(x, current_scope)
         elif x[0] == "abstract_call":
             handle_abstract_call(x, current_scope)
-        # elif x[0] == "conditionals":
-        #     print("*" * 30)
-        #     print(symbol_table)
-        #     # print(scope_stack)
-        #     print("*" * 30)
-        #     handle_conditionals(x)
-        # elif x[0] == "argument_declaration":
-        #     print(x[2])
+        elif x[0] == "conditionals":
+            handle_conditionals(x, current_scope)
 
 
 # Type checking
@@ -352,7 +346,14 @@ def handle_print_statement(node, current_scope):
                     print(lookup_var_1.value, lookup_var_2.value)
             else:
                 lookup_var_2 = current_scope.lookup(node[2])
+                if lookup_var_2 == None:
+                    raise ValueError(
+                        f"The second argument '{node[2]}' is not a declared in this scope"
+                    )
                 print(node[1], lookup_var_2.value)
+                # else
+                # print(lookup_var_2)
+                # print(node[1], node[2])
         else:
             raise ValueError("Invalid scribe statement")
         # if isinstance(node[2], str):
@@ -376,26 +377,13 @@ def handle_print_statement(node, current_scope):
         #     raise ValueError("Invalid scribe statement")
     else:
         raise ValueError("Invalid scribe statement")
-    # print(len(node))
-    # print(node)
-    # if node[2] != "@":
-
-    #     if check_symbol_table(node[2]):
-    #         var_name = node[2]
-    #         # TODO remove the print statement
-    #         var_type, value, is_locked, symbol_type = symbol_table[var_name]
-    #         print(f"{node[1]}, '{value}'")
-    #     else:
-    #         print(f"Undeclared variable '{node[2]}'")
-    #         raise ValueError(f"Undeclared variable '{node[2]}'")
-    # else:
-    #     print(f"{node[1]}")
 
 
 # # Handles attempt and findout blocks
 def handle_attempt_findout_block(node, current_scope):
-    handle_attempt_block(node[1], current_scope)
-    handle_findout_block(node[2], current_scope)
+    attempt_scope = new_scope(current_scope)
+    handle_attempt_block(node[1], attempt_scope)
+    handle_findout_block(node[2], attempt_scope)
     # print(node)
 
 
@@ -411,7 +399,7 @@ def handle_findout_block(node, current_scope):
     semantic_analyzer(node[2], current_scope)
 
 
-# TODO: Implement parameter and argument declaration
+# TODO: Implement parameter and argument declaration (DONE)
 # Handles abstract function declaration
 def handle_abstract_function_declaration(node, current_scope):
     check_if_function_exists = current_scope.lookup(node[1])
@@ -436,8 +424,8 @@ def handle_abstract_function_declaration(node, current_scope):
 #     pass
 
 
-# # TODO: Implement parameter and argument declaration
-# # Handles abstract function call
+# TODO: Implement parameter and argument declaration (DONE)
+# Handles abstract function call
 def handle_abstract_call(node, current_scope):
     check_if_function_exists = current_scope.lookup(node[1])
     print(node)
@@ -453,6 +441,11 @@ def handle_abstract_call(node, current_scope):
         if arguments == [None] and params == [None]:
             statements_ast = check_if_function_exists.statements
             semantic_analyzer(statements_ast, function_scope)
+            return
+        if arguments == None and params == None:
+            statements_ast = check_if_function_exists.statements
+            semantic_analyzer(statements_ast, function_scope)
+            return
         # if the function has parameters but no arguments raise an error
         if arguments == [None] and params != [None]:
             raise ValueError(f"Expected {len(params)} arguments, got 0")
@@ -568,6 +561,7 @@ def handle_abstract_call(node, current_scope):
                 function_scope.insert(
                     VariableSymbol(param[2], param[1], argument[1], False)
                 )
+
         statements_ast = check_if_function_exists.statements
         semantic_analyzer(statements_ast, function_scope)
     else:
@@ -575,88 +569,102 @@ def handle_abstract_call(node, current_scope):
         raise ValueError(f"Function '{node[1]}' is not declared")
 
 
-# # Handles conditionals
-# def handle_conditionals(node):
-#     if node[1][0] == "if":
-#         helper_handle_if(node[1])
-#     elif node[1][0] == "if_elif":
-#         handle_if_elif(node[1])
-#     elif node[1][0] == "if_else":
-#         handle_if_else(node[1])
-#     elif node[1][0] == "if_elif_else":
-#         handle_if_elif_else(node[1])
-#     elif node[1][0] == "aslongas_statement":
-#         handle_aslongas(node[1])
-#     elif node[1][0] == "for_loop":
-#         handle_for_loop(node[1])
-#     else:
-#         raise ValueError("Invalid conditional")
+# Handles conditionals
+def handle_conditionals(node, current_scope):
+    if node[1][0] == "if":
+        helper_handle_if(node[1], current_scope)
+    elif node[1][0] == "if_elif":
+        handle_if_elif(node[1], current_scope)
+    elif node[1][0] == "if_else":
+        handle_if_else(node[1], current_scope)
+    elif node[1][0] == "if_elif_else":
+        handle_if_elif_else(node[1], current_scope)
+    elif node[1][0] == "aslongas_statement":
+        handle_aslongas(node[1], current_scope)
+    elif node[1][0] == "for_loop":
+        handle_for_loop(node[1], current_scope)
+    else:
+        raise ValueError("Invalid conditional")
 
 
-# def handle_if_elif(node):
-#     ifstatement = node[1]
-#     helper_handle_if(ifstatement)
-#     elifstatement = node[2]
-#     helper_handle_elif(elifstatement)
-#     print(node)
+def helper_handle_if(node, current_scope):
+    expression = handle_expression(node[1], current_scope)
+    print(expression)
+    if isinstance(expression, bool):
+        if_scope = new_scope(current_scope)
+        semantic_analyzer(node[2], if_scope)
+    else:
+        raise ValueError("Expected a boolean expression in IF statement")
 
-# def handle_if_else(node):
-#     ifstatement = node[1]
-#     helper_handle_if(ifstatement)
-#     helper_handle_else(node[2])
-#     print(node)
 
-# def handle_if_elif_else(node):
-#     ifstatement = node[1]
-#     helper_handle_if(ifstatement)
-#     helper_handle_elif(node[2])
-#     helper_handle_else(node[3])
-#     print(node)
+def handle_if_elif(node, current_scope):
+    ifstatement = node[1]
+    helper_handle_if(ifstatement, current_scope)
+    elifstatement = node[2]
+    helper_handle_elif(elifstatement, current_scope)
 
-# def helper_handle_if(node):
-#     expression = handle_expression(node[1])
-#     print(expression)
-#     if isinstance(expression, bool):
-#         semantic_analyzer(node[2])
-#     else:
-#         raise ValueError("Expected a boolean expression in IF statement")
 
-# def helper_handle_elif(node):
-#     expression = handle_expression(node[1])
-#     print(expression)
-#     if isinstance(expression, bool):
-#         semantic_analyzer(node[2])
-#     else:
-#         raise ValueError("Expected a boolean expression in ELIF statement")
+def handle_if_else(node, current_scope):
+    ifstatement = node[1]
+    helper_handle_if(ifstatement, current_scope)
+    helper_handle_else(node[2], current_scope)
 
-# def helper_handle_else(node):
-#     semantic_analyzer(node[1])
 
-# def handle_aslongas(node):
-#     expression = handle_expression(node[1])
-#     print(expression)
-#     if type(expression) == bool:
-#         semantic_analyzer(node[2])
-#     else:
-#         raise ValueError("Expected a boolean expression in ASLONGAS statement")
+def handle_if_elif_else(node, current_scope):
+    ifstatement = node[1]
+    helper_handle_if(ifstatement, current_scope)
+    helper_handle_elif(node[2], current_scope)
+    helper_handle_else(node[3], current_scope)
 
-# # # Handles for loops
-# # # TODO: Handle the identifier in the for loop, they need to local scope and be removed after the loop
-# # # TODO: Handle the arguments in the for loop, they need to be added to the symbol table and removed after the loop
-# # def handle_for_loop(node):
-# if node[1] == "range":
-#     print("Range")
-#     for x in node[3]:
-#         add = add_to_symbol_table(x[0], type(x[1]).__name__, x[1], "for_argument")
-#         if add:
-#             print(f"Added '{x[0]}' to symbol table")
-#             semantic_analyzer(node[4])
-# elif node[1] == "in":
-#     # TODO: Add scope so that the variable declared in the for loop is removed after the loop and is used within the for loop
-#     semantic_analyzer(node[4])
-#     print("In")
-# else:
-#     raise ValueError("Invalid for loop")
+
+def helper_handle_elif(node, current_scope):
+    expression = handle_expression(node[1], current_scope)
+    print(expression)
+    if isinstance(expression, bool):
+        elif_scope = new_scope(current_scope)
+        semantic_analyzer(node[2], elif_scope)
+    else:
+        raise ValueError("Expected a boolean expression in ELIF statement")
+
+
+def helper_handle_else(node, current_scope):
+    else_scope = new_scope(current_scope)
+    semantic_analyzer(node[1], else_scope)
+
+
+def handle_aslongas(node, current_scope):
+    expression = handle_expression(node[1], current_scope)
+    print(expression)
+    if type(expression) == bool:
+        aslongas_scope = new_scope(current_scope)
+        semantic_analyzer(node[2], aslongas_scope)
+    else:
+        raise ValueError("Expected a boolean expression in ASLONGAS statement")
+
+
+# Handles for loops
+# TODO: Handle the identifier in the for loop, they need to local scope and be removed after the loop
+# TODO: Handle the arguments in the for loop, they need to be added to the symbol table and removed after the loop
+def handle_for_loop(node, current_scope):
+    if node[1] == "range":
+        var = current_scope.lookup(node[2])
+        if var:
+            raise ValueError(f"Variable '{node[3]}' in for loop is already declared")
+        for x in node[3]:
+            for_scope = new_scope(current_scope)
+            for_scope.insert(VariableSymbol(x[0], type(x[1]).__name__, x[1], True))
+            # add = add_to_symbol_table(x[0], type(x[1]).__name__, x[1], "for_argument")
+            semantic_analyzer(node[4], for_scope)
+    elif node[1] == "in":
+        # TODO: Add scope so that the variable declared in the for loop is removed after the loop and is used within the for loop
+        var = current_scope.lookup(node[2])
+        if var:
+            raise ValueError(f"Variable '{node[3]}' in for loop is already declared")
+        for_scope = new_scope(current_scope)
+        for_scope.insert(VariableSymbol(node[3], "int", None, True))
+        semantic_analyzer(node[4], for_scope)
+    else:
+        raise ValueError("Invalid for loop")
 
 
 # semantic_analyzer(prints, global_symbol_table)

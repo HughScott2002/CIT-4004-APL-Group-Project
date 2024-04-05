@@ -6,12 +6,13 @@ from code_generator import generate_code
 # TODO: Add arithmetic operations to the language (Done)
 # TODO: Make sure you can assign a variable to another variable (Done)
 # TODO: Add conditionals to the language (DONE)
-# TODO: Add scope and binding to the language
-# TODO: Add params and args to the language
-# TODO: Add function return types to the language
-# TODO: Add arrays and lists to the language
+# TODO: Add scope and binding to the language (Done)
+# TODO: Add params and args to the language (Done)
 # TODO: Finish the code generator
+# TODO: Finish the server backend
 # TODO: Create custom errors for the language
+# TODO: Add function return types to the language (Made room for it)
+# TODO: Add arrays and lists to the language
 
 
 def main():

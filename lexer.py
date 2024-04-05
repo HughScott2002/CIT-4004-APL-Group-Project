@@ -266,7 +266,7 @@ def t_error(t):
 lexer = lex.lex()
 
 # Test the lexer
-# lexer.input(shortdata)
+# lexer.input(longdata)
 # for token in lexer:
 #     print(token.type)
 
