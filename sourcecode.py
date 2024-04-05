@@ -52,23 +52,23 @@ findout unboundlocalerror{
 # *************************************************************
 # Abstract Declaration with no parameters
 # *************************************************************
-abstract PLUS(){
-    #Declaration within the function
-    lock float _A = 5.5@
-    lock float _B = 10.5@
-    lock float _SUM = _A + _B@
-    scribe(_SUM)@
-    scribe("This is A inside the function:", _A)@
-}
+# abstract PLUS(){
+#     #Declaration within the function
+#     lock float _A = 5.5@
+#     lock float _B = 10.5@
+#     lock float _SUM = _A + _B@
+#     scribe(_SUM)@
+#     scribe("This is A inside the function:", _A)@
+# }
 
 # Try and call the function
-hail PLUS()@
+# hail PLUS()@
 
 # Declareing _A outside the function and with a different type
-lock bool _A = true@
+# lock bool _A = true@
 
 #Try and use a variable that is not defined globally but was defined in the function
-scribe("This is a outside the function:", _A)@
+# scribe("This is _A is outside the function:", _A)@
 # *************************************************************
 
 
@@ -76,16 +76,28 @@ scribe("This is a outside the function:", _A)@
 # *************************************************************
 # Abstract Declaration with parameters
 # *************************************************************
-abstract MINUS(int _X, int _Y){
-    lock int _SUM = _X + _Y@
-    scribe(_SUM)@
-}
+# abstract MINUS(int _X, int _Y){
+#     lock int _Difference = _X - _Y@
+#     scribe("This is the difference",_Difference)@
+# }
 
 # Try and call the function
-hail MINUS(1, 2)@
+# hail MINUS(1+1+2, 2+3)@
+# hail MINUS(1+1+2, 7-8)@
 # lock int _X = 5@
-# lock int _Y = 10@
+# lock int _Y = 19@
 # hail MINUS(_X, _Y)@
+
+
+abstract IS_IT_TRUE(bool _X, bool _Y){
+    
+    scribe("This _X", _X)@
+    scribe("This _Y", _Y)@
+}
+
+
+hail IS_IT_TRUE(true, false)@
+
 
 #Try and use a variable that is not defined globally but was defined in the function
 # scribe(_A)@

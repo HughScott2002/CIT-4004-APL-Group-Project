@@ -440,71 +440,134 @@ def handle_abstract_function_declaration(node, current_scope):
 # # Handles abstract function call
 def handle_abstract_call(node, current_scope):
     check_if_function_exists = current_scope.lookup(node[1])
+    print(node)
     if check_if_function_exists:
         # Declaring a new scope for the function
         function_scope = new_scope(current_scope)
         # Check if the function has parameters
         params = check_if_function_exists.params
         print(params)
-        if params != [None]:
-            arguments = node[2]
-            if arguments == [None]:
-                raise ValueError(f"Expected {len(params)} arguments, got 0")
-            # Check if the number of arguments match the number of parameters
-            if len(params) != len(node[2]):
-                raise ValueError(
-                    f"Expected {len(params)} arguments, got {len(node[2])}"
+        # Check if the function has arguments
+        arguments = node[2]
+        # if the function has no parameters and no arguments run the function
+        if arguments == [None] and params == [None]:
+            statements_ast = check_if_function_exists.statements
+            semantic_analyzer(statements_ast, function_scope)
+        # if the function has parameters but no arguments raise an error
+        if arguments == [None] and params != [None]:
+            raise ValueError(f"Expected {len(params)} arguments, got 0")
+        # Check if the number of arguments match the number of parameters
+        if len(params) != len(arguments):
+            raise ValueError(f"Expected {len(params)} arguments, got {len(arguments)}")
+
+        for param, argument in zip(params, arguments):
+            print(param, argument)
+            if isinstance(argument[1], tuple):
+                argument_value = handle_expression(argument[1], current_scope)
+                print(argument_value)
+                if argument_value:
+                    lookup_param = current_scope.lookup(param[2])
+                    print(lookup_param)
+                    print(param)
+                    if lookup_param == None:
+                        check_if_param_and_arg_are_same_type = type_checking(
+                            param[1], argument_value
+                        )
+                        print(param[1], argument_value)
+                        if not check_if_param_and_arg_are_same_type:
+                            raise ValueError(
+                                f"Invalid argument'{argument_value}' of type '{type(argument_value).__name__}' not the same type as the parameter '{param[1]}'"
+                            )
+                        print(check_if_param_and_arg_are_same_type)
+
+                        if check_if_param_and_arg_are_same_type:
+                            function_scope.insert(
+                                VariableSymbol(
+                                    param[2], param[1], argument_value, False
+                                )
+                            )
+                            lookup_param = function_scope.lookup(param[2])
+                            print(
+                                f"Declared '{lookup_param.name}' of type '{lookup_param.type}' with value '{lookup_param.value}'"
+                            )
+                        # print(f"Declared '{param[2]}' of type '{argument_value[1]}'")
+                    else:
+                        check_if_param_and_arg_are_same_type = type_checking(
+                            lookup_param.type, argument_value
+                        )
+                        if check_if_param_and_arg_are_same_type:
+                            function_scope.insert(
+                                VariableSymbol(
+                                    param[2], param[1], argument_value, False
+                                )
+                            )
+                        else:
+                            raise ValueError(
+                                f"Invalid argument'{argument[1]}' not the same type as the parameter '{param[1]}'"
+                            )
+                else:
+                    raise ValueError(
+                        f"Invalid argument'{argument[1]}' expression not calculated"
+                    )
+            elif isinstance(argument[1], str):
+                # print(argument[1][0])
+                if argument[1][0] == "_":
+                    lookup_var = current_scope.lookup(argument[1])
+                    if not lookup_var:
+                        raise ValueError(
+                            f"Undeclared variable '{argument[1]}' in argument"
+                        )
+                    lookup_param = current_scope.lookup(param[2])
+                    if lookup_param.value == lookup_var.value:
+                        check_type = type_checking(lookup_param.type, lookup_var.value)
+                        if not check_type:
+                            raise ValueError(
+                                f"Invalid argument'{lookup_var.value}' of type '{type(lookup_var.value).__name__}' not the same type as the parameter '{param[1]}'"
+                            )
+                        function_scope.insert(
+                            VariableSymbol(param[2], param[1], lookup_var.value, False)
+                        )
+                        print(function_scope.lookup(param[2]).value)
+                else:
+                    check_type = type_checking(argument[1], param[1])
+                    if not check_type:
+                        raise ValueError(
+                            f"Invalid argument'{lookup_var.value}' of type '{type(lookup_var.value).__name__}' not the same type as the parameter '{param[1]}'"
+                        )
+                    function_scope.insert(
+                        VariableSymbol(param[2], param[1], lookup_var.value, False)
+                    )
+                    print(function_scope.lookup(param[2]).value)
+                    # print(lookup_param.type, lookup_var.value)
+                    # raise ValueError("stop here")
+                    # check_if_param_and_arg_are_same_type = type_checking(
+                    #     param[1], argument_value
+                    # )
+                    # print(param[1], argument_value)
+                    # if not check_if_param_and_arg_are_same_type:
+                    #     raise ValueError(
+                    #         f"Invalid argument'{argument_value}' of type '{type(argument_value).__name__}' not the same type as the parameter '{param[1]}'"
+                    #     )
+                    # print(check_if_param_and_arg_are_same_type)
+                    # function_scope.insert(
+                    #     VariableSymbol(param[2], param[1], lookup_var.value, False)
+                    # )
+            elif (
+                isinstance(argument[1], int)
+                or isinstance(argument[1], float)
+                or isinstance(argument[1], bool)
+            ):
+                check_if_param_and_arg_are_same_type = type_checking(
+                    param[1], argument[1]
                 )
-            count = 0
-            for param in params:
-
-                check_if_param_exists = function_scope.lookup(param[2])
-                # Add the parameters to the function scope
-                if check_if_param_exists == False:
-                    raise ValueError(f"Parameter '{param}' is not declared")
-                    # Check if the parameters are declared as variables
-                    # semantic_analyzer(node[2], function_scope)
-
-                # check_arg = current_scope.lookup(arguments[count])
-                # print(check_arg)
-                # if check_arg == None:
-                #     type = type_checking(param[1], arguments[count])
-                #     if type == False:
-                #         print(
-                #             f"Expected an {param[1]}, got '{type(arguments[count]).__name__}'"
-                #         )
-                #         raise ValueError(
-                #             f"Expected an {param[1]}, got '{type(arguments[count]).__name__}'"
-                #         )
-                #     value = arguments[count]
-                #     function_scope.update(
-                #         VariableSymbol(param[2], param[1], value, False)
-                #     )
-                # if check_arg[count][1][0] == "_":
-                #     value = handle_expression(arguments[count], current_scope)
-                #     function_scope.insert(
-                #         VariableSymbol(param[2], param[1], value, False)
-                #     )
-                #     # raise ValueError("Invalid argument")
-
-                # if not check_arg:
-                #     raise ValueError(
-                #         f"Argument '{arguments[count]}' is not declared before use"
-                #     )
-                # add_to_symbol_table = function_scope.insert(
-                #     VariableSymbol(param[2], param[1], None, False)
-                # )
-
-                # if check_arg[1][0] == "_":
-                #     check_if_arg_exists = current_scope.lookup(check_arg[1])
-                #     if not check_if_arg_exists:
-                #         raise ValueError(
-                #             f"Argument '{check_arg}' is not declared before use"
-                # )
-                count += 1
-                # Check if the parameters are declared as variables
-            semantic_analyzer(node[2], function_scope)
-        # else:
+                if not check_if_param_and_arg_are_same_type:
+                    raise ValueError(
+                        f"Invalid argument'{argument[1]}' of type '{type(argument[1]).__name__}' not the same type as the parameter '{param[1]}'"
+                    )
+                print(check_if_param_and_arg_are_same_type)
+                function_scope.insert(
+                    VariableSymbol(param[2], param[1], argument[1], False)
+                )
         statements_ast = check_if_function_exists.statements
         semantic_analyzer(statements_ast, function_scope)
     else:
@@ -513,21 +576,22 @@ def handle_abstract_call(node, current_scope):
 
 
 # # Handles conditionals
-# def handle_conditionals(node):
-#     if node[1][0] == "if":
-#         helper_handle_if(node[1])
-#     elif node[1][0] == "if_elif":
-#         handle_if_elif(node[1])
-#     elif node[1][0] == "if_else":
-#         handle_if_else(node[1])
-#     elif node[1][0] == "if_elif_else":
-#         handle_if_elif_else(node[1])
-#     elif node[1][0] == "aslongas_statement":
-#         handle_aslongas(node[1])
-#     elif node[1][0] == "for_loop":
-#         handle_for_loop(node[1])
-#     else:
-#         raise ValueError("Invalid conditional")
+def handle_conditionals(node):
+    if node[1][0] == "if":
+        helper_handle_if(node[1])
+    elif node[1][0] == "if_elif":
+        handle_if_elif(node[1])
+    elif node[1][0] == "if_else":
+        handle_if_else(node[1])
+    elif node[1][0] == "if_elif_else":
+        handle_if_elif_else(node[1])
+    elif node[1][0] == "aslongas_statement":
+        handle_aslongas(node[1])
+    elif node[1][0] == "for_loop":
+        handle_for_loop(node[1])
+    else:
+        raise ValueError("Invalid conditional")
+
 
 # def handle_if_elif(node):
 #     ifstatement = node[1]
