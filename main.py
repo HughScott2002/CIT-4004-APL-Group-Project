@@ -22,25 +22,25 @@ def main():
 
     # Create a global symbol table
     global_symbol_table = SymbolTable()
-    print("*" * 50)
-    print("Parsing the source code:")
+    # print("*" * 50)
+    # print("Parsing the source code:")
     ast = parser.parse(longdata)
-    print(ast)
-    print("*" * 50)
+    # print(ast)
+    # print("*" * 50)
 
     # Semantic Analysis
-    print("*" * 50)
-    print("Performing Semantic Analysis:")
-    function_scope = new_scope(global_symbol_table)
+    # print("*" * 50)
+    # print("Performing Semantic Analysis:")
+    # function_scope = new_scope(global_symbol_table)
     semantic_analyzer(ast, global_symbol_table)
-    computed_symbols = global_symbol_table.get_all_symbols()
+    # computed_symbols = global_symbol_table.get_all_symbols()
 
-    function_symbols = function_scope.get_all_symbols()
+    # function_symbols = function_scope.get_all_symbols()
     # function_scope_symbols = function_scope.get_all_symbols()
     # print(function_scope.get_all_symbols()["_A"].value)
     # print(computed_symbols["_A"].value)
     # print(computed_symbols)
-    print(function_symbols)
+    # print(function_symbols)
 
     # var = computed_symbols["_Inside_Attempt"]
     # print(f"Name: {var.name}")
@@ -56,14 +56,14 @@ def main():
     # print(f"Value: {variable_symbol.value}")
     # print(f"Is Locked: {variable_symbol.is_locked}")
     # print(ast)
-    print("*" * 50)
+    # print("*" * 50)
 
     # # Code Generation
-    print("*" * 50)
-    print("Generating Python code:")
-    python_code = generate_code(ast, computed_symbols)
+    # print("*" * 50)
+    # print("Generating Python code:")
+    python_code = generate_code(ast)
     print(python_code)
-    print("*" * 50)
+    # print("*" * 50)
 
 
 if __name__ == "__main__":

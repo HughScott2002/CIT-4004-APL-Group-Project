@@ -124,11 +124,11 @@ def p_if_statement(p):
                  | IF expression LBRACE statements RBRACE ELIF expression LBRACE statements RBRACE
                  | IF expression LBRACE statements RBRACE ELIF expression LBRACE statements RBRACE ELSE LBRACE statements RBRACE
     """
-    print(len(p))
+    # print(len(p))
     if len(p) == 6:
         p[0] = ("if", p[2], p[4])
     elif len(p) == 10:
-        print(p[6])
+        # print(p[6])
         if p[6] == "else":
             # print(p[9])
             # print(p[8])
@@ -443,10 +443,10 @@ def p_empty(p):
 
 def p_error(p):
     if p:
-        print(f"Syntax error at line {p.lineno}, token='{p.value}'")
+        # print(f"Syntax error at line {p.lineno}, token='{p.value}'")
         raise ValueError(f"Syntax error at line {p.lineno}, token='{p.value} '")
     else:
-        print("Syntax error at EOF")
+        # print("Syntax error at EOF")
         raise ValueError(f"Syntax error at EOF")
 
 
