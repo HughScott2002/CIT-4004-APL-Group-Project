@@ -1,0 +1,157 @@
+
+<program> ::= <statements>
+
+<statements> ::= <statement> <statements>
+              | <empty>
+
+<statement> ::= <declaration>
+              | <assignment>
+              | <abstract_call>
+              | <abstract_function_declaration>
+              | <print_statement>
+              | <conditionals>
+              | <attempt_findout_block>
+
+<declaration> ::= <mutex> <type> "IDENTIFIER" "=" <expression> "@"
+                | <mutex> <type> "IDENTIFIER" "@"
+
+<assignment> ::= "IDENTIFIER" "=" <expression> "@"
+
+<abstract_call> ::= "HAIL" "FUNCTIONID" "(" <arguments> ")" "@"
+
+<abstract_function_declaration> ::= "ABSTRACT" "FUNCTIONID" "(" <parameters> ")" "{" <statements> "}"
+
+<print_statement> ::= "SCRIBE" "(" "STRING_LITERAL" "," "IDENTIFIER" ")" "@"
+                     | "SCRIBE" "(" "STRING_LITERAL" ")" "@"
+                     | "SCRIBE" "(" "IDENTIFIER" ")" "@"
+
+<conditionals> ::= <if_statement>
+                  | <for_statement>
+                  | <aslongas_statement>
+
+<if_statement> ::= "IF" <expression> "{" <statements> "}"
+    | "IF" <expression> "{" <statements> "}" "ELSE" "{" <statements> "}"
+    | "IF" <expression> "{" <statements> "}" "ELIF" <expression> "{" <statements> "}"
+    | "IF" <expression> "{" <statements> "}" "ELIF" <expression> "{" <statements> "}" "ELSE" "{" <statements> "}"
+
+<for_statement> ::= "FOR" "IDENTIFIER" "IN" "RANGE" "(" <arguments> ")" "{" <statements> "}"
+                   | "FOR" "IDENTIFIER" "IN" <iterables> "{" <statements> "}"
+
+<iterables> ::= "STRING_LITERAL"
+               | "IDENTIFIER"
+
+<aslongas_statement> ::= "ASLONGAS" <expression> "{" <statements> "}"
+
+
+<attempt_findout_block> ::= <attempt_block> <findout_block>
+
+<attempt_block> ::= "ATTEMPT" "{" <statements> "}"
+
+<findout_block> ::= "FINDOUT" <error_type> "{" <statements> "}"
+
+<parameter> ::= <type> "IDENTIFIER"
+
+<parameters> ::= <parameter> "," <parameters>
+                | <parameter>
+                | <empty>
+
+<arguments> ::= <argument> "," <arguments>
+               | <argument>
+               | <empty>
+
+<argument> ::= "IDENTIFIER"
+              | <expression>
+
+<mutex> ::= "UNLOCK"
+           | "LOCK"
+
+<type> ::= "INT_TYPE"
+           | "FLOAT_TYPE"
+           | "BOOL_TYPE"
+           | "STRING_TYPE"
+<expression> ::= "(" <expression> ")"
+               | <expression> "+" <expression>
+               | <expression> "-" <expression>
+               | <expression> "*" <expression>
+               | <expression> "/" <expression>
+               | <expression> "**" <expression>
+               | <expression> "!=" <expression>
+               | <expression> "<" <expression>
+               | <expression> ">" <expression>
+               | <expression> "<=" <expression>
+               | <expression> ">=" <expression>
+               | <expression> "==" <expression>
+               | <expression> "&" <expression>
+               | <expression> "|" <expression>
+               | <expression> "^" <expression>
+               | <expression> "<<" <expression>
+               | <expression> ">>" <expression>
+               | "!" <expression>
+               | "+" <expression>
+               | "-" <expression>
+               | "~" <expression>
+               | "INTEGER"
+               | "FLOAT"
+               | "IDENTIFIER"
+               | "BOOLEAN"
+               | "STRING_LITERAL"
+
+<error_type> ::= "UNBOUNDLOCALERROR"
+                | "TYPEERROR"
+                | "VALUEERROR"
+                | "INDEXERROR"
+                | "KEYERROR"
+                | "EXCEPTION"
+                | "SYNTAXERROR"
+                | "STOPITERATION"
+                | "ARITHMETICERROR"
+                | "FLOATINGPOINTERROR"
+                | "OVERFLOWERROR"
+                | "ZERODIVISIONERROR"
+                | "ASSERTIONERROR"
+                | "ATTRIBUTEERROR"
+                | "BUFFERERROR"
+                | "EOFERROR"
+                | "IMPORTERROR"
+                | "MODULENOTFOUNERROR"
+                | "LOOKUPERROR"
+                | "MEMORYERROR"
+                | "NAMEERROR"
+                | "BLOCKINGIOERROR"
+                | "CHILDPROCESSERROR"
+                | "CONNECTIONERROR"
+                | "BROKENPIPEERROR"
+                | "CONNECTIONABORTEDERROR"
+                | "CONNECTIONREFUSEDERROR"
+                | "CONNECTIONRESETERROR"
+                | "FILEEXISTERROR"
+                | "FILENOTFOUNERROR"
+                | "INTERRUPTEDERROR"
+                | "ISADIRECTORYERROR"
+                | "NOTADIRECTORYERROR"
+                | "PERMISSIONERROR"
+                | "PROCESSLOOKUPERROR"
+                | "TIMEOUTERROR"
+                | "REFERENCEERROR"
+                | "RUNTIMEERROR"
+                | "INDENTATIONERROR"
+                | "TABERROR"
+                | "SYSTEMERROR"
+                | "UNICODEERROR"
+                | "UNICODEENCODEERROR"
+                | "UNICODEDECODEERROR"
+                | "UNICODETRANSLATEERROR"
+                | "WARNING"
+                | "USERWARNING"
+                | "DEPRECATIONWARNING"
+                | "PENDINGDEPRECATIONWARNING"
+                | "SYNTAXWARNING"
+                | "RUNTIMEWARNING"
+                | "FUTUREWARNING"
+                | "IMPORTWARNING"
+                | "UNICODEWARNING"
+                | "BYTESWARNING"
+                | "RESOURCEWARNING"
+                | "KEYBOARDINTERRUPT"
+
+<empty> ::=

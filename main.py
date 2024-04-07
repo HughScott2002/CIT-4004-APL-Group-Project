@@ -8,7 +8,7 @@ from code_generator import generate_code
 # TODO: Add conditionals to the language (DONE)
 # TODO: Add scope and binding to the language (Done)
 # TODO: Add params and args to the language (Done)
-# TODO: Finish the code generator
+# TODO: Finish the code generator (Fix the symbol table and the expression generator)
 # TODO: Finish the server backend
 # TODO: Create custom errors for the language
 # TODO: Add function return types to the language (Made room for it)
@@ -22,7 +22,6 @@ def main():
 
     # Create a global symbol table
     global_symbol_table = SymbolTable()
-
     print("*" * 50)
     print("Parsing the source code:")
     ast = parser.parse(longdata)
@@ -32,16 +31,39 @@ def main():
     # Semantic Analysis
     print("*" * 50)
     print("Performing Semantic Analysis:")
+    function_scope = new_scope(global_symbol_table)
     semantic_analyzer(ast, global_symbol_table)
+    computed_symbols = global_symbol_table.get_all_symbols()
+
+    function_symbols = function_scope.get_all_symbols()
+    # function_scope_symbols = function_scope.get_all_symbols()
+    # print(function_scope.get_all_symbols()["_A"].value)
+    # print(computed_symbols["_A"].value)
+    # print(computed_symbols)
+    print(function_symbols)
+
+    # var = computed_symbols["_Inside_Attempt"]
+    # print(f"Name: {var.name}")
+    # global_symbol_table.print_child_scopes()
+    # inside_attempt_symbol = "_Inside_Attempt"
+    # insert_symbol = global_symbol_table.insert(
+    #     VariableSymbol(inside_attempt_symbol, "bool", True, True)
+    # )
+    # variable_symbol = computed_symbols[inside_attempt_symbol]
+    # print("Variable Symbol: ", variable_symbol, type(variable_symbol))
+    # print(f"Name: {variable_symbol.name}")
+    # print(f"Type: {variable_symbol.type}")
+    # print(f"Value: {variable_symbol.value}")
+    # print(f"Is Locked: {variable_symbol.is_locked}")
     # print(ast)
     print("*" * 50)
 
     # # Code Generation
-    # print("*" * 50)
-    # print("Generating Python code:")
-    # python_code = generate_code(ast)
-    # print(python_code)
-    # print("*" * 50)
+    print("*" * 50)
+    print("Generating Python code:")
+    python_code = generate_code(ast, computed_symbols)
+    print(python_code)
+    print("*" * 50)
 
 
 if __name__ == "__main__":

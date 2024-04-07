@@ -227,7 +227,6 @@ def handle_declaration(node, current_scope):
         if not type_check:
             raise ValueError(f"Expected an {var_type}, got '{type(value).__name__}'")
             # raise ValueError(f"Cannot assign locked variable '{var_name}'")
-
         # Checks if the variable is locked
         # if is_locked:
         #     raise ValueError(f"Cannot assign locked variable '{var_name}'")
@@ -356,6 +355,10 @@ def handle_print_statement(node, current_scope):
                 # print(node[1], node[2])
         else:
             raise ValueError("Invalid scribe statement")
+        # if node[0][0] == "_":
+        #     print(node[0][0])
+        #     print("******" * 40)
+        #     raise ValueError("Invalid scribe statement")
         # if isinstance(node[2], str):
         #     if node[2][0] == "_":
         #         lookup_var = current_scope.lookup(node[2])
@@ -458,6 +461,7 @@ def handle_abstract_call(node, current_scope):
             if isinstance(argument[1], tuple):
                 argument_value = handle_expression(argument[1], current_scope)
                 print(argument_value)
+                print(f"This is the argument value\n\n\n")
                 if argument_value:
                     lookup_param = current_scope.lookup(param[2])
                     print(lookup_param)
@@ -479,6 +483,9 @@ def handle_abstract_call(node, current_scope):
                                     param[2], param[1], argument_value, False
                                 )
                             )
+                            # function_scope.insert(
+                            #     ArgumentSymbol(param[2], argument_value, node[1])
+                            # )
                             lookup_param = function_scope.lookup(param[2])
                             print(
                                 f"Declared '{lookup_param.name}' of type '{lookup_param.type}' with value '{lookup_param.value}'"
@@ -646,6 +653,7 @@ def handle_aslongas(node, current_scope):
 # TODO: Handle the identifier in the for loop, they need to local scope and be removed after the loop
 # TODO: Handle the arguments in the for loop, they need to be added to the symbol table and removed after the loop
 def handle_for_loop(node, current_scope):
+    print(node)
     if node[1] == "range":
         var = current_scope.lookup(node[2])
         if var:

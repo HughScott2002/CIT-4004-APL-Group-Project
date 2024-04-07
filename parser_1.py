@@ -452,7 +452,7 @@ def p_error(p):
 
 parser = yacc.yacc()
 
-input_data = longdata
+# input_data = longdata
 
-result = parser.parse(input_data)
-print(result)
+# result = parser.parse(input_data)
+# print(result)

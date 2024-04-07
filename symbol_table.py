@@ -25,6 +25,7 @@ class SymbolTable:
     def __init__(self, parent=None):
         self.symbols = {}
         self.parent = parent
+        self.child_scopes = []
 
     def insert(self, symbol):
         if symbol.name in self.symbols:
@@ -38,8 +39,10 @@ class SymbolTable:
     def lookup(self, name, current_scope_only=False):
         symbol = self.symbols.get(name)
         if symbol is not None:
+            print("Symbol found in the current scope")
             return symbol
         elif not current_scope_only and self.parent:
+            print("Symbol not found in the current scope, looking in the parent scope")
             return self.parent.lookup(name)
         else:
             # raise ValueError(f"Symbol '{name}' not found in the current scope.")
@@ -50,33 +53,43 @@ class SymbolTable:
             raise ValueError(f"Symbol '{name}' does not exist and couldn't be updated")
         self.symbols[name] = new_symbol
 
-    # def dump(self):
-    #     print("Symbols in the current scope:")
-    #     for key, value in self.symbols.items():
-    #         if self.symbols.get(key):
-    #             print(f"Name: {key}, Value: {value.value}")
-    #         print(f"Name: {key}, Value: {value[key]}")
+    def get_all_symbols(self):
+        symbols = {}
+
+        self._collect_symbols(symbols)
+        return symbols
+
+    def _collect_symbols(self, symbols):
+
+        for symbol_name, symbol in self.symbols.items():
+            symbols[symbol_name] = symbol
+
+        for child_scope in self.child_scopes:
+            child_scope._collect_symbols(symbols)
 
 
 # Function to create a new scope
 def new_scope(parent=None):
-    return SymbolTable(parent)
+    new_scope = SymbolTable(parent)
+    if parent is not None:
+        parent.child_scopes.append(new_scope)
+    return new_scope
 
 
 # # Global symbol table
 # global_symbol_table = SymbolTable()
-# # Create a new scope (e.g. inside a function)
+# # # Create a new scope (e.g. inside a function)
 # plus = new_scope(global_symbol_table)
-# minus = new_scope(global_symbol_table)
+# # minus = new_scope(global_symbol_table)
 
-# # # # Example usage
-# # # # Declare global variables
+# # # # # Example usage
+# # # # # Declare global variables
 
-# global_symbol_table.insert(
-#     VariableSymbol(
-#         "_Global_var", "str", value="This is a global variable.", is_locked=False
-#     )
-# )
+# # global_symbol_table.insert(
+# #     VariableSymbol(
+# #         "_Global_var", "str", value="This is a global variable.", is_locked=False
+# #     )
+# # )
 # global_symbol_table.insert(VariableSymbol("_TEN", "int", value=10))
 # global_symbol_table.insert(VariableSymbol("_PI", "float", value=3.14))
 # # global_symbol_table.insert(VariableSymbol("_PI", "float", value=3.14))
@@ -116,11 +129,14 @@ def new_scope(parent=None):
 # # global_symbol_table.insert(func_symbol)
 
 
-# # # # Declare local variables
+# # # # # Declare local variables
 # plus.insert(VariableSymbol("_A", "float", value=5.5))
 # plus.insert(VariableSymbol("_B", "float", value=10.5))
-# plus.insert(VariableSymbol("_SUM", "float", value=15.5))
-
+# # plus.insert(VariableSymbol("_SUM", "float", value=15.5))
+# global_computed_symbols = global_symbol_table.get_all_symbols()
+# scope_plus_computed_symbols = plus.get_all_symbols()
+# print("Global Computed Symbols: ", global_computed_symbols)
+# print("Scope Plus Computed Symbols: ", scope_plus_computed_symbols)
 # minus.insert(VariableSymbol("_AA", "float", value=15.5))
 # minus.insert(VariableSymbol("_BB", "float", value=20.5))
 # minus.insert(VariableSymbol("_SUMM", "float", value=25.5))
