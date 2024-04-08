@@ -17,7 +17,9 @@ import io, sys
 # TODO: Add arrays and lists to the language
 
 app = Flask(__name__)
+allowed_origins = ["https://apl-web-ui.vercel.app", "*"]
 
+CORS(app, origins=allowed_origins)
 
 @app.route("/generate_code", methods=["POST"])
 def parse_code():
