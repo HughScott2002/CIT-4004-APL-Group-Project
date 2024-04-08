@@ -19,7 +19,7 @@ import io, sys
 app = Flask(__name__)
 
 
-@app.route("/parse", methods=["POST"])
+@app.route("/generate_code", methods=["POST"])
 def parse_code():
     global_symbol_table = SymbolTable()
     input_code = request.json.get("code")
