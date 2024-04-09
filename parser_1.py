@@ -124,15 +124,10 @@ def p_if_statement(p):
                  | IF expression LBRACE statements RBRACE ELIF expression LBRACE statements RBRACE
                  | IF expression LBRACE statements RBRACE ELIF expression LBRACE statements RBRACE ELSE LBRACE statements RBRACE
     """
-    # print(len(p))
     if len(p) == 6:
         p[0] = ("if", p[2], p[4])
     elif len(p) == 10:
-        # print(p[6])
         if p[6] == "else":
-            # print(p[9])
-            # print(p[8])
-            # print(p[7])
             p[0] = ("if_else", ("if", p[2], p[4]), ("else", p[8]))
     elif len(p) == 11:
         p[0] = ("if_elif", ("if", p[2], p[4]), ("elif", p[7], p[9]))
@@ -221,14 +216,6 @@ def p_expression(p):
         ("left", "SHIFTLEFT", "SHIFTRIGHT"),
     )
     if len(p) == 4:
-        # if isinstance(p[2], tuple):
-        #     print("is a tuple")
-        #     print(p[1])
-        #     print(p[2])
-        #     print(p[3])
-        #     if p[2][0] == "add":
-        #         p[0] = ("add", p[1], p[3])
-        # p[0] = p[0]
         if p[2] == "+":
             p[0] = ("add", p[1], p[3])
         elif p[2] == "-":
@@ -261,8 +248,6 @@ def p_expression(p):
             p[0] = ("shift_left", p[1], p[3])
         elif p[2] == ">>":
             p[0] = ("shift_right", p[1], p[3])
-        # print(type(p[2]))
-        # print(p[2])
     elif len(p) == 3:
         if p[1] == "!":
             p[0] = ("not", p[2])
@@ -276,14 +261,6 @@ def p_expression(p):
         p[0] = p[1]
     else:
         raise ValueError("Invalid expression")
-
-    # if isinstance(p[0], tuple):
-    #     # print("Hit here *")
-    #     # print("*2*")
-    #     # print(p[0])
-    #     # print("*2*")
-    #     p[0] = p[0]  # Convert the result to a tuple for better performance
-    # # print(p[0])
 
 
 # ATTEMPT_FINDOUT_BLOCK
@@ -452,7 +429,9 @@ def p_error(p):
 
 parser = yacc.yacc()
 
-# input_data = longdata
 
+# Test the parser here |
+#                      V
+# input_data = shortdata
 # result = parser.parse(input_data)
 # print(result)

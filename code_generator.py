@@ -1,7 +1,8 @@
+# Function to generate Python code from the AST
+# It takes a variable indent_level to keep track of the indentation level
 def generate_code(ast, indent_level=0):
     generated_code = ""
     for node in ast:
-        # print(node[0])
         if node[0] == "declaration":
             generated_code += generate_declaration(node, indent_level)
         elif node[0] == "assignment":
@@ -22,110 +23,14 @@ def generate_code(ast, indent_level=0):
     return generated_code
 
 
+# Dictionary to store the results of the variables in the code
+# It adds a new level for each indentation level then stores the variable name and its value
 results = {}
-inside_results = {}
-# add
 
 
-# def handle_expression(node,  indent_level):
-#     if isinstance(node, int) or isinstance(node, float) or isinstance(node, bool):
-#         # table[node] = node
-#         # print(table)
-#         return node
-#     elif isinstance(node, tuple):
-#         if node[0] == "add":
-#             left_operand = handle_expression(node[1],  indent_level)
-#             right_operand = handle_expression(node[2],  indent_level)
-#             result = left_operand + right_operand
-#             print(left_operand, right_operand, result)
-#             return result
-#         elif node[0] == "sub":
-#             left_operand = handle_expression(node[1],  indent_level)
-#             right_operand = handle_expression(node[2],  indent_level)
-#             result = left_operand - right_operand
-#             print(left_operand, right_operand, result)
-#             return result
-#         elif node[0] == "mul":
-#             left_operand = handle_expression(node[1],  indent_level)
-#             right_operand = handle_expression(node[2],  indent_level)
-#             result = left_operand * right_operand
-#             print(left_operand, right_operand, result)
-#             return result
-#         elif node[0] == "div":
-#             left_operand = handle_expression(node[1],  indent_level)
-#             right_operand = handle_expression(node[2],  indent_level)
-#             result = left_operand / right_operand
-#             print(left_operand, right_operand, result)
-#             return result
-#         elif node[0] == "power":
-#             left_operand = handle_expression(node[1],  indent_level)
-#             right_operand = handle_expression(node[2],  indent_level)
-#             result = left_operand**right_operand
-#             print(left_operand, right_operand, result)
-#             return result
-#         elif node[0] == "not":
-#             operand = handle_expression(node[1], indent_level)
-#             if not isinstance(operand, bool):
-#                 raise ValueError(f"Expected a boolean, got '{type(operand).__name__}'")
-#             result = not operand
-#             print(operand, result)
-#             return result
-#         elif node[0] == "equivalent":
-#             left_operand = handle_expression(node[1],  indent_level)
-#             right_operand = handle_expression(node[2],  indent_level)
-#             result = left_operand == right_operand
-#             print(left_operand, right_operand, result)
-#             return result
-#         elif node[0] == "greater_than":
-#             left_operand = handle_expression(node[1],  indent_level)
-#             right_operand = handle_expression(node[2],  indent_level)
-#             result = left_operand > right_operand
-#             print(left_operand, right_operand, result)
-#             return result
-#         elif node[0] == "less_than":
-#             left_operand = handle_expression(node[1],  indent_level)
-#             right_operand = handle_expression(node[2],  indent_level)
-#             result = left_operand < right_operand
-#             print(left_operand, right_operand, result)
-#             return result
-#         elif node[0] == "not_equal":
-#             left_operand = handle_expression(node[1],  indent_level)
-#             right_operand = handle_expression(node[2],  indent_level)
-#             result = left_operand != right_operand
-#             print(left_operand, right_operand, result)
-#             return result
-#         elif node[0] == "less_than_or_equal":
-#             left_operand = handle_expression(node[1],  indent_level)
-#             right_operand = handle_expression(node[2],  indent_level)
-#             result = left_operand <= right_operand
-#             print(left_operand, right_operand, result)
-#             return result
-#         elif node[0] == "greater_than_or_equal":
-#             left_operand = handle_expression(node[1],  indent_level)
-#             right_operand = handle_expression(node[2],  indent_level)
-#             result = left_operand >= right_operand
-#             print(left_operand, right_operand, result)
-#             return result
-#     elif isinstance(node, str):
-#         if 0 in results and node in results[0]:
-#             value = results[0][node]
-#             return value
-#         # Check if the variable is in the current scope
-#         elif indent_level in results and node in results[indent_level]:
-#             value = results[indent_level][node]
-#             return value
-#         else:
-#             return computed_symbols[node].value
-#             # raise ValueError(f"Undeclared variable '{node}'")
-#     elif node is None:
-#         return node
-#     else:
-#         raise ValueError(f"Invalid expression {node}")
-
-
+# Generates a declaration statement
 def generate_declaration(node, indent_level):
-    # print(node)
-    indent = "    " * indent_level  # Calculate indentation
+    indent = "    " * indent_level
     if len(node) == 4:
         var_type, var_name = node[2], node[3]
         return f"{indent}{var_name} = None\n"
@@ -164,23 +69,14 @@ def generate_declaration(node, indent_level):
         raise ValueError("Invalid declaration")
 
 
+# Generates an assignment statement
 def generate_assignment(node, indent_level):
     # if indent_level > 0:
     #     # print(node)
-    indent = "    " * indent_level  # Calculate indentation
+    indent = "    " * indent_level
     var_name, value = node[1], node[3]
     if isinstance(value, tuple):
         values = conditional_switcher(value)
-        # value = handle_expression(value,  indent_level)
-        # # Clear all indentation levels except 0 (global scope)
-        # for level in list(results.keys()):
-        #     if level != 0 and level != indent_level:
-        #         results.pop(level)
-        # if indent_level not in results:
-        #     results[indent_level] = {}
-        # results[indent_level][var_name] = value
-        # print(results)
-        # return f"{indent}{var_name} = {value}\n"
         return f"{indent}{var_name} = {values}\n"
     elif (
         isinstance(value, str)
@@ -189,6 +85,7 @@ def generate_assignment(node, indent_level):
         | isinstance(value, bool)
     ):
         # Clear all indentation levels except 0 (global scope)
+        # This is done so that you can access a variable of the same name inside another scope
         for level in list(results.keys()):
             if level != 0 and level != indent_level:
                 results.pop(level)
@@ -197,9 +94,9 @@ def generate_assignment(node, indent_level):
         results[indent_level][var_name] = value
         return f"{indent}{var_name} = {value}\n"
     return f"{indent}{var_name} = {value}\n"
-    # return f"{indent}{var_name} = {value}\n"
 
 
+# Generates a print statement
 def generate_print_statement(node, indent_level):
     indent = "    " * indent_level
     if len(node) == 2:
@@ -227,8 +124,9 @@ def generate_print_statement(node, indent_level):
         raise ValueError("Invalid print statement")
 
 
+# Generates an try-except block
 def handle_attempt_findout_block(node, indent_level):
-    indent = "    " * indent_level  # Calculate indentation
+    indent = "    " * indent_level
     attempt_block, findout_block = node[1], node[2]
     generated_code = f"{indent}try:\n"
     generated_code += handle_attempt_block(attempt_block, indent_level + 1)
@@ -238,8 +136,9 @@ def handle_attempt_findout_block(node, indent_level):
     return generated_code
 
 
+# Generates the code for the try block
 def handle_attempt_block(node, indent_level):
-    indent = "    " * indent_level  # Calculate indentation
+    indent = "    " * indent_level
     attempt_block = node[1]
     generated_code = ""
     for statement in attempt_block:
@@ -247,38 +146,25 @@ def handle_attempt_block(node, indent_level):
     return f"{generated_code}"
 
 
+# Generates the code for the except block
 def handle_findout_block(node, indent_level):
-    indent = "    " * indent_level  # Calculate indentation
+    indent = "    " * indent_level
     findout_block = node[2]
     generated_code = ""
     for statement in findout_block:
         generated_code += generate_code([statement], indent_level) + "\n"
-    return f"{generated_code}"
+    return f"{indent}{generated_code}"
 
 
+# Generates the function declaration
 def handle_abstract_function_declaration(node, indent_level):
-    # print(node)
-    # print("HERRRRRRRRRRRERRRRRRRRRRRRRRRRRRRRR")
     indent = "    " * indent_level
-    # print(node[1])
-    # print(node[2])
-    # print(node[3])
-    # print(node[4])
-    # function = computed_symbols[node[1]]
     function_name = node[1]
-    # name, params, return_type, statements
-    # print(function_name)
-    # print(function.params[0])
-    # print(function.return_type)
-    # print(function.statements)
     parameters = node[2]
-    # print(parameters[0])
     function_body = node[3]
     generated_code = f"def {function_name}("
     if parameters[0] == None:
         generated_code += "):\n"
-        # generated_code = generated_code[:-2]  # Remove the last comma and space
-        # generated_code += "):\n"
         for statement in function_body:
             generated_code += generate_code([statement], indent_level + 1)
         return f"{indent}{generated_code}"
@@ -295,17 +181,15 @@ def handle_abstract_function_declaration(node, indent_level):
         return f"{indent}{generated_code}"
 
 
+# Generates the code for the abstract function call
 def handle_abstract_call(node, indent_level):
-    # print(node)
     indent = "    " * indent_level
     function_name = node[1]
     arguments = node[2]
     generated_code = f"{function_name}("
     if arguments[0] != None:
-        # print(arguments)
         for arg in arguments:
             if arg[0] == "argument_declaration":
-                # computed_symbols[arg[1]].value
                 value = conditional_switcher(arg[1])
                 generated_code += f"{value}, "
                 generated_code = generated_code[:-1]
@@ -313,16 +197,12 @@ def handle_abstract_call(node, indent_level):
             else:
                 generated_code += f"{arg}, "
                 generated_code = generated_code[:-2]
-                # print("hit")
-    # generated_code = generated_code[:-1]  # Remove the last comma and space
     generated_code += ")\n"
-    # print(generated_code)
     return f"{indent}{generated_code}"
 
 
+# Generates the code for the conditional statements
 def handle_conditionals(node, indent_level):
-    # print("Handling conditionals\n\n")
-    # print(node[1][0])
     if node[1][0] == "if":
         return helper_handle_if([node[1]], indent_level)
     elif node[1][0] == "if_elif":
@@ -339,29 +219,20 @@ def handle_conditionals(node, indent_level):
         raise ValueError("Invalid conditional")
 
 
+# Generates the code for the while loop
 def helper_handle_if(node, indent_level):
     indent = "    " * indent_level
-    # print(node[0])
-    # print("Handling if\n\n")
     if node[0][0] == "if":
-        # print(len(node[0][1]))
-        # if len(node[0][1]) == 3:
-        #     x = node[0][1][1]
-        #     y = node[0][1][2]
-        #     print(x, y)
-        # value = handle_expression(node[0][1],  indent_level)
         value = conditional_switcher(node[0][1])
-        generated_code = f"if {value}:\n"  # TODO Fix the expressions
-        # elif len(node[0][1]) == 1:
-        #     generate_code = f"if {node[0][1]}:\n"
+        generated_code = f"{indent}if {value}:\n"
         for statement in node[0][2]:
-            # print([statement])
             generated_code += generate_code([statement], indent_level + 1)
         return generated_code
     else:
         raise ValueError("Invalid conditional block")
 
 
+# Generates the code for the elif block
 def handle_if_elif(node, indent_level):
     indent = "    " * indent_level
     ifstatement = node[1]
@@ -371,20 +242,17 @@ def handle_if_elif(node, indent_level):
     return generated_code
 
 
+# Generates the code for the elif block
 def helper_handle_elif(node, indent_level):
     indent = "    " * indent_level
-    # print("Handling elif\n\n")
-    # print(node[1])
-    # value = handle_expression(node[1],  indent_level)
     value = conditional_switcher(node[1])
-    generated_code = f"elif {value}:\n"
+    generated_code = f"{indent}elif {value}:\n"
     for statement in node[2]:
-        # print([statement])
         generated_code += generate_code([statement], indent_level + 1)
-    # print(generated_code)
     return generated_code
 
 
+# Generates the code for the else block
 def handle_if_else(node, indent_level):
     ifstatement = node[1]
     generated_code = ""
@@ -393,21 +261,17 @@ def handle_if_else(node, indent_level):
     return generated_code
 
 
+# Helper to generate the code for the else block
 def helper_handle_else(node, indent_level):
     indent = "    " * indent_level
-    # print("Handling else\n\n")
-    # print(node[0])
 
-    generated_code = "else:\n"
+    generated_code = f"{indent}else:\n"
     for statement in node[1]:
-        # print([statement])
         generated_code += generate_code([statement], indent_level + 1)
-    # print(generated_code)
     return generated_code
-    # else:
-    #     raise ValueError("Invalid conditional block")
 
 
+# Generates the code for the if-elif-else block
 def handle_if_elif_else(node, indent_level):
     indent = "    " * indent_level
     ifstatement = node[1]
@@ -418,6 +282,8 @@ def handle_if_elif_else(node, indent_level):
     return generated_code
 
 
+# Switcher for the conditional statements
+# It evaluates expressions and returns the result to be compiled
 def conditional_switcher(node):
     generated_code = ""
     if (
@@ -431,12 +297,10 @@ def conditional_switcher(node):
         left_operand = conditional_switcher(node[1])
         right_operand = conditional_switcher(node[2])
         generated_code += f"{left_operand} != {right_operand}"
-        # generated_code += f"{node[1]} != {node[2]}"
     elif node[0] == "less_than":
         left_operand = conditional_switcher(node[1])
         right_operand = conditional_switcher(node[2])
         generated_code += f"{left_operand} < {right_operand}"
-        # generated_code += f"{node[1]} < {node[2]}"
     elif node[0] == "greater_than":
         left_operand = conditional_switcher(node[1])
         right_operand = conditional_switcher(node[2])
@@ -460,27 +324,22 @@ def conditional_switcher(node):
     elif node[0] == "bitwise_and":
         left_operand = conditional_switcher(node[1])
         right_operand = conditional_switcher(node[2])
-        # generated_code += f"{node[1]} & {node[2]}"
         generated_code += f"{left_operand} & {right_operand}"
     elif node[0] == "bitwise_or":
-        # generated_code += f"{node[1]} | {node[2]}"
         left_operand = conditional_switcher(node[1])
         right_operand = conditional_switcher(node[2])
         generated_code += f"{left_operand} | {right_operand}"
     elif node[0] == "bitwise_xor":
-        # generated_code += f"{node[1]} ^ {node[2]}"
         left_operand = conditional_switcher(node[1])
         right_operand = conditional_switcher(node[2])
         generated_code += f"{left_operand} ^ {right_operand}"
     elif node[0] == "shift_left":
-        # generated_code += f"{node[1]} << {node[2]}"
         left_operand = conditional_switcher(node[1])
         right_operand = conditional_switcher(node[2])
         generated_code += f"{left_operand} << {right_operand}"
     elif node[0] == "shift_right":
         left_operand = conditional_switcher(node[1])
         right_operand = conditional_switcher(node[2])
-        # generated_code += f"{node[1]} >> {node[2]}"
         generated_code += f"{left_operand} >> {right_operand}"
     elif node[0] == "not":
         operand = conditional_switcher(node[1])
@@ -489,62 +348,33 @@ def conditional_switcher(node):
         left_operand = conditional_switcher(node[1])
         right_operand = conditional_switcher(node[2])
         return f"{left_operand} + {right_operand}"
-        # generated_code += f"{node[1]} + {node[2]}"
     elif node[0] == "sub":
         left_operand = conditional_switcher(node[1])
         right_operand = conditional_switcher(node[2])
         return f"{left_operand} -  {right_operand}"
-        # generated_code += f"{node[1]} - {node[2]}"
     elif node[0] == "mul":
         left_operand = conditional_switcher(node[1])
         right_operand = conditional_switcher(node[2])
         return f"{left_operand} * {right_operand}"
-        # generated_code += f"{node[1]} * {node[2]}"
     elif node[0] == "div":
         left_operand = conditional_switcher(node[1])
         right_operand = conditional_switcher(node[2])
         return f"{left_operand} / {right_operand}"
-        # generated_code += f"{node[1]} / {node[2]}"
     elif node[0] == "power":
         left_operand = conditional_switcher(node[1])
         right_operand = conditional_switcher(node[2])
         return f"{left_operand} ** {right_operand}"
-        # generated_code += f"{node[1]} ** {node[2]}"
     return generated_code
-    # elif p[2] == "<":
-    #     p[0] = ("less_than", p[1], p[3])
-    # elif p[2] == ">":
-    #     p[0] = ("greater_than", p[1], p[3])
-    # elif p[2] == "<=":
-    #     p[0] = ("less_than_or_equal", p[1], p[3])
-    # elif p[2] == ">=":
-    #     p[0] = ("greater_than_or_equal", p[1], p[3])
-    # elif p[2] == "==":
-    #     p[0] = ("equivalent", p[1], p[3])
-    # elif p[2] == "&":
-    #     p[0] = ("bitwise_and", p[1], p[3])
-    # elif p[2] == "|":
-    #     p[0] = ("bitwise_or", p[1], p[3])
-    # elif p[2] == "^":
-    #     p[0] = ("bitwise_xor", p[1], p[3])
-    # elif p[2] == "<<":
-    #     p[0] = ("shift_left", p[1], p[3])
-    # elif p[2] == ">>":
-    #     p[0] = ("shift_right", p[1], p[3])
 
 
+# Generates the code for the while loop
 def handle_aslongas(node, indent_level):
     indent = "    " * indent_level
-    # print(node[1])
     length = len(node[1])
-    # print(length)
-    # print(type(node[1]))
     aslongas = node[2]
-    # print(aslongas)
     generated_code = ""
     if isinstance(node[1], tuple):
         value = conditional_switcher(node[1])
-        # value = conditional_switcher(node[1])
         generated_code += f"while {value}:\n"
         for statement in aslongas:
             generated_code += generate_code([statement], indent_level + 1)
@@ -552,28 +382,18 @@ def handle_aslongas(node, indent_level):
     generated_code += f"while {node[1]}:\n"
     for statement in aslongas:
         generated_code += generate_code([statement], indent_level + 1)
-    # for block in aslongas:
-    #     if block[0] == "aslongas":
-    #         generated_code += f"while {block[1]}:\n"
-    #         for statement in block[2]:
-    #             generated_code += generate_code(
-    #                 statement,  indent_level + 1
-    #             )
-    #     else:
-    #         raise ValueError("Invalid conditional block")
     return generated_code
 
 
+# Generates the code for the for loop
 def handle_for_loop(node, indent_level):
     indent = "    " * indent_level
-    # print(node)
     for_loop_type = node[1]
     id = node[2]
     generated_code = ""
     if for_loop_type == "range":
         generated_code += f"for {id} in range("
         for i in range(len(node[3])):
-            # print(node[3][i][1])
             generated_code += f"{node[3][i][1]}, "
         generated_code = generated_code[:-2]  # Remove the last comma and space
         generated_code += "):\n"
@@ -585,45 +405,11 @@ def handle_for_loop(node, indent_level):
         for statement in node[4]:
             generated_code += generate_code([statement], indent_level + 1)
         return generated_code
-    # print(for_loop_type)
-
-    # generated_code += f"for {block[1]} in {block[2]}:\n"
-    # for statement in block[3]:
-    #     generated_code += generate_code(statement,  indent_level + 1)
 
     return generated_code
 
 
-# def handle_conditionals(node,  indent_level):
-#     print(node)
-#     indent = "    " * indent_level
-#     if_elif_else = node[1]
-#     generated_code = ""
-#     for block in if_elif_else:
-#         if block[0] == "if":
-#             generated_code += f"if {block[1]}:\n"
-#             for statement in block[2]:
-#                 generated_code += generate_code(
-#                     statement,  indent_level + 1
-#                 )
-#         elif block[0] == "elif":
-#             generated_code += f"elif {block[1]}:\n"
-#             for statement in block[2]:
-#                 generated_code += generate_code(
-#                     statement,  indent_level + 1
-#                 )
-#         elif block[0] == "else":
-#             generated_code += "else:\n"
-#             for statement in block[1]:
-#                 generated_code += generate_code(
-#                     statement,  indent_level + 1
-#                 )
-#         else:
-#             raise ValueError("Invalid conditional block")
-#     print(generated_code)
-#     return generated_code
-
-
+# Dictionary that maps the error token to the corresponding Python error token
 def get_python_error_token(reserved_word):
     tokens = {
         "exception": "Exception",
@@ -687,9 +473,3 @@ def get_python_error_token(reserved_word):
     }
 
     return tokens.get(reserved_word.lower(), None)
-
-
-# Example usage
-# generated_python_code = generate_code(ast)
-# print("Generated Python code:")
-# print(generated_python_code)

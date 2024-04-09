@@ -15,6 +15,7 @@ class FunctionSymbol:
     def __init__(self, name, params, return_type, statements):
         self.name = name
         self.params = params
+        # Return type is not used in the current implementation
         self.return_type = return_type
         self.statements = statements
         # self.visibility = visibility
@@ -30,22 +31,19 @@ class SymbolTable:
     def insert(self, symbol):
         if symbol.name in self.symbols:
             return False
-            # raise ValueError(
-            #     f"Symbol '{symbol.name}' already exists in the current scope."
-            # )
         self.symbols[symbol.name] = symbol
         return True
 
     def lookup(self, name, current_scope_only=False):
         symbol = self.symbols.get(name)
         if symbol is not None:
-            # print("Symbol found in the current scope")
+            # Symbol found in the current scope
             return symbol
         elif not current_scope_only and self.parent:
-            # print("Symbol not found in the current scope, looking in the parent scope")
+            # Symbol not found in the current scope, looking in the parent scope
             return self.parent.lookup(name)
         else:
-            # raise ValueError(f"Symbol '{name}' not found in the current scope.")
+            # "Symbol not found in the current scope or its parents"
             return None
 
     def update(self, name, new_symbol):
@@ -74,94 +72,118 @@ def new_scope(parent=None):
     return new_scope
 
 
-# # Global symbol table
-global_symbol_table = SymbolTable()
-# # Create a new scope (e.g. inside a function)
-plus = new_scope(global_symbol_table)
-# minus = new_scope(global_symbol_table)
+# Test the symobol table here |
+#                             V
 
-# # # # Example usage
-# # # # Declare global variables
+
+# # Global symbol table
+# global_symbol_table = SymbolTable()
+
+# # Create a new scope (e.g. inside a function)
+# plus = new_scope(global_symbol_table)  # This is a new scope inside the global scope
+# minus = new_scope(global_symbol_table)  # This is a new scope inside the global scope
+# inside_plus = new_scope(plus)  # This is a new scope inside the plus scope
+
+# # Example usage
+# # Declare global variables
 
 # global_symbol_table.insert(
 #     VariableSymbol(
 #         "_Global_var", "str", value="This is a global variable.", is_locked=False
 #     )
 # )
+# global_symbol_table.insert(VariableSymbol("_A", "int", value=5))
 # global_symbol_table.insert(VariableSymbol("_TEN", "int", value=10))
 # global_symbol_table.insert(VariableSymbol("_PI", "float", value=3.14))
-# # global_symbol_table.insert(VariableSymbol("_PI", "float", value=3.14))
 # global_symbol_table.insert(
 #     VariableSymbol("_BINARY", "bool", value=True, is_locked=False)
 # )
-# global_symbol_table.insert(VariableSymbol("_Assignment", "int", value=None))
-# global_symbol_table.update("_Assignment", VariableSymbol("_Assignment", "int", value=5))
-# global_symbol_table.insert(
-#     VariableSymbol("locked_var", "bool", value=True, is_locked=True)
+
+# # Declare a function
+# func_params = [
+#     VariableSymbol("_X", "int"),
+#     VariableSymbol("_Y", "int"),
+# ]
+# func_symbol = FunctionSymbol(
+#     "PLUS",
+#     func_params,
+#     "void",
+#     [
+#         ("declaration", ("mutex_declaration", "lock"), "float", "_A", 5.5),
+#         ("declaration", ("mutex_declaration", "lock"), "float", "_B", 10.5),
+#         (
+#             "declaration",
+#             ("mutex_declaration", "lock"),
+#             "float",
+#             "_SUM",
+#             ("add", "_A", "_B"),
+#         ),
+#     ],
 # )
-
-# # # Declare a function
-# # # func_params = [VariableSymbol("x", "int"), VariableSymbol("y", "int")]
-# # # Maybe change these form being locked
-# # func_params = [
-# #     VariableSymbol("_X", "int"),
-# #     VariableSymbol("_Y", "int"),
-# # ]
-# # # Maybe I should and and arguments sections to the function symbol
-# # func_symbol = FunctionSymbol(
-# #     "PLUS",
-# #     func_params,
-# #     "void",
-# #     [
-# #         ("declaration", ("mutex_declaration", "lock"), "float", "_A", 5.5),
-# #         ("declaration", ("mutex_declaration", "lock"), "float", "_B", 10.5),
-# #         (
-# #             "declaration",
-# #             ("mutex_declaration", "lock"),
-# #             "float",
-# #             "_SUM",
-# #             ("add", "_A", "_B"),
-# #         ),
-# #     ],
-# # )
-# # global_symbol_table.insert(func_symbol)
+# global_symbol_table.insert(func_symbol)
 
 
-# # # # Declare local variables
-# plus.insert(VariableSymbol("_A", "float", value=5.5))
+# # Declare local variables
+# plus.insert(VariableSymbol("_A", "float", value=95.5))
 # plus.insert(VariableSymbol("_B", "float", value=10.5))
 # plus.insert(VariableSymbol("_SUM", "float", value=15.5))
 
-# minus.insert(VariableSymbol("_AA", "float", value=15.5))
+# minus.insert(VariableSymbol("_A", "bool", value=True))
 # minus.insert(VariableSymbol("_BB", "float", value=20.5))
 # minus.insert(VariableSymbol("_SUMM", "float", value=25.5))
 
-# # # Lookup symbols
+# inside_plus.insert(VariableSymbol("_Locked_var", "int", value=42, is_locked=True))
+# inside_plus.insert(
+#     VariableSymbol("_My_Name", "string", value="TypeSnake", is_locked=True)
+# )
+# inside_plus.insert(
+#     VariableSymbol("_A", "string", value="A inside the inside_plus scope")
+# )
 
-# # print("*******These are the gobal variables*******")
-# # print(
-# #     global_symbol_table.lookup("_Global_var").value
-# # )  # Output: This is a global variable.
-# # print(global_symbol_table.lookup("_TEN").value)  # Output: 10
-# # print(global_symbol_table.lookup("_PI").value)  # Output: 3.14
-# # print(global_symbol_table.lookup("_BINARY").value)  # Output: True
-# # print(global_symbol_table.lookup("_Assignment").value)  # Output: 5
+# # Lookup symbols
+# print("Global Symbol Table:")
+# print(
+#     "This is the variable _Global_var =",
+#     global_symbol_table.lookup("_Global_var").value,
+# )  # Output: This is a global variable.
+# print(
+#     "This is the variable _TEN =", global_symbol_table.lookup("_TEN").value
+# )  # Output: 10
+# print(
+#     "This is the variable _PI =", global_symbol_table.lookup("_PI").value
+# )  # Output: 3.14
+# print(
+#     "This is the variable _BINARY =", global_symbol_table.lookup("_BINARY").value
+# )  # Output: True
+# print(
+#     "This is the function delcared =", global_symbol_table.lookup("PLUS").name
+# )  # Output: PLUS
+# print("\n")
 
+# print("Plus Symbol Table:")
+# print("_B in plus scope = ", plus.lookup("_B").value)  # Output: 10.5
+# print("_SUM in plus scope = ", plus.lookup("_SUM").value)  # Output: 15.5
+# print("\n")
 
-# # print("\n")
-# # print("*******These are the local variables*******")
-# print(plus.lookup("_A").value)  # Output: 5.5
-# print(plus.lookup("_B").value)  # Output: 10.5
-# print(plus.lookup("_SUM").value)  # Output: 15.5
-# # print(plus.lookup("local_var").value)  # Output: 3.14
-# # print(plus.lookup("global_var").value)  # Output: 42
-# print(plus.lookup("locked_var").is_locked)  # Output: True
-# # print(plus.lookup("my_func").return_type)  # Output: int
-# print(plus.lookup("_TEN").value)  # Output: 10
-# # print(global_symbol_table.lookup("_A").value)  # Output: Error
+# print("Minus Symbol Table:")
+# print("_BB in minus scope = ", minus.lookup("_BB").value)  # Output: 20.5
+# print("_SUMM in minus scope = ", minus.lookup("_SUMM").value)  # Output: 25.5
+# print("\n")
 
+# print("Inside Plus Symbol Table:")
+# print(
+#     "_Locked_var in inside_plus scope", inside_plus.lookup("_Locked_var").is_locked
+# )  # Output: True
+# print(
+#     "_My_Name in inside_plus scope", inside_plus.lookup("_My_Name").value
+# )  # Output: TypeSnake
+# print("\n")
 
-# print(minus.lookup("_AA").value)  # Output: 15.5
-# print(minus.lookup("_BB").value)  # Output: 20.5
-# print(minus.lookup("_SUMM").value)  # Output: 25.5
-# print(minus.lookup("_SUM").is_locked)  # Output: True
+# print("Variable Shadowing:")
+# # Notice how _A can be redefined inside each scope
+# print("_A in global scope =", global_symbol_table.lookup("_A").value)  # Output: 5
+# print("_A in minus scope = ", minus.lookup("_A").value)  # Output: True
+# print("_A in plus scope =", plus.lookup("_A").value)  # Output: 95.5
+# print(
+#     "_A in inside_plus scope", inside_plus.lookup("_A").value
+# )  # Output: A inside the inside_plus scope

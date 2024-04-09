@@ -1,11 +1,8 @@
-# import parser_1 as parser
-# from shortsourcecode import data as shortdata
-
-# Symobol Table
-# from SymbolTable import *
 from symbol_table import *
 
 
+# Goes through the AST and performs semantic analysis
+# The semantic analyzer gets passed the AST and the current scope
 def semantic_analyzer(ast, current_scope):
     for x in ast:
         if x[0] == "declaration":
@@ -80,83 +77,68 @@ def handle_expression(node, current_scope):
             left_operand = handle_expression(node[1], current_scope)
             right_operand = handle_expression(node[2], current_scope)
             result = left_operand + right_operand
-            # print(left_operand, right_operand, result)
             return result
         elif node[0] == "sub":
             left_operand = handle_expression(node[1], current_scope)
             right_operand = handle_expression(node[2], current_scope)
             result = left_operand - right_operand
-            # print(left_operand, right_operand, result)
             return result
         elif node[0] == "mul":
             left_operand = handle_expression(node[1], current_scope)
             right_operand = handle_expression(node[2], current_scope)
             result = left_operand * right_operand
-            # print(left_operand, right_operand, result)
             return result
         elif node[0] == "div":
             left_operand = handle_expression(node[1], current_scope)
             right_operand = handle_expression(node[2], current_scope)
             result = left_operand / right_operand
-            # print(left_operand, right_operand, result)
             return result
         elif node[0] == "power":
             left_operand = handle_expression(node[1], current_scope)
             right_operand = handle_expression(node[2], current_scope)
             result = left_operand**right_operand
-            # print(left_operand, right_operand, result)
             return result
         elif node[0] == "not":
-            # Check if the operand is a primitive type
             operand = handle_expression(node[1], current_scope)
             if not isinstance(operand, bool):
-                # print(f"Expected a boolean, got '{type(operand).__name__}'")
                 raise ValueError(f"Expected a boolean, got '{type(operand).__name__}'")
             result = not operand
-            # print(operand, result)
             return result
         elif node[0] == "equivalent":
             left_operand = handle_expression(node[1], current_scope)
             right_operand = handle_expression(node[2], current_scope)
             result = left_operand == right_operand
-            # print(left_operand, right_operand, result)
             return result
         elif node[0] == "greater_than":
             left_operand = handle_expression(node[1], current_scope)
             right_operand = handle_expression(node[2], current_scope)
             result = left_operand > right_operand
-            # print(left_operand, right_operand, result)
             return result
         elif node[0] == "less_than":
             left_operand = handle_expression(node[1], current_scope)
             right_operand = handle_expression(node[2], current_scope)
             result = left_operand < right_operand
-            # print(left_operand, right_operand, result)
             return result
         elif node[0] == "not_equal":
             left_operand = handle_expression(node[1], current_scope)
             right_operand = handle_expression(node[2], current_scope)
             result = left_operand != right_operand
-            # print(left_operand, right_operand, result)
             return result
         elif node[0] == "less_than_or_equal":
             left_operand = handle_expression(node[1], current_scope)
             right_operand = handle_expression(node[2], current_scope)
             result = left_operand <= right_operand
-            # print(left_operand, right_operand, result)
             return result
         elif node[0] == "greater_than_or_equal":
             left_operand = handle_expression(node[1], current_scope)
             right_operand = handle_expression(node[2], current_scope)
             result = left_operand >= right_operand
-            # print(left_operand, right_operand, result)
             return result
     # Check if the node is a string
     elif isinstance(node, str):
         # Check is the node is a variable
         if node[0] == "_":
             # If the node is a variable, check if it is in the symbol table
-            # check = check_symbol_table(node)
             lookup_var = current_scope.lookup(node)
             if not lookup_var:
                 # print(f"Undeclared variable '{node}'")
@@ -173,7 +155,6 @@ def handle_expression(node, current_scope):
 # Handles declarations
 def handle_declaration(node, current_scope):
     if len(node) == 4:
-        # print((node))
         var_mut, var_type, var_name = node[1][1], node[2], node[3]
         if var_mut == "lock":
             is_locked = True
@@ -181,14 +162,8 @@ def handle_declaration(node, current_scope):
             is_locked = False
         else:
             raise ValueError("Invalid mutex declaration")
-        # is_locked = var_mut == "lock"
-        # type_checking(var_type, None)
-        # print("Got passed the mut check")
-        # LOOKUP
         check_if_variable_exists = current_scope.lookup(var_name)
-        # print(check_if_variable_exists)
         if check_if_variable_exists:
-            # print(f"Variable '{var_name}' is already declared")
             raise ValueError(f"Variable '{var_name}' is already declared")
         elif check_if_variable_exists is None:
             add_to_symbol_table = current_scope.insert(
@@ -196,10 +171,6 @@ def handle_declaration(node, current_scope):
             )
             if add_to_symbol_table == False:
                 raise ValueError(f"Variable '{var_name}' is already declared")
-        # print("Got passed the lookup check")
-        # Adds to the symbol table or sends back false
-
-        # check_symbol = add_to_symbol_table(var_name, var_type, None, is_locked)
     elif len(node) == 5:
         var_mut, var_type, var_name, value = node[1][1], node[2], node[3], node[4]
         if var_mut == "lock":
@@ -227,27 +198,12 @@ def handle_declaration(node, current_scope):
         if not type_check:
             raise ValueError(f"Expected an {var_type}, got '{type(value).__name__}'")
             # raise ValueError(f"Cannot assign locked variable '{var_name}'")
-        # Checks if the variable is locked
-        # if is_locked:
-        #     raise ValueError(f"Cannot assign locked variable '{var_name}'")
-
-        # Adds to the symbol table or sends back false
+        # If the type is correct, assign the value to the variable
         add_to_symbol_table = current_scope.insert(
             VariableSymbol(var_name, var_type, value, is_locked)
         )
         if add_to_symbol_table == False:
             raise ValueError(f"Variable '{var_name}' is already declared")
-
-        # var = current_scope.lookup(var_name)
-        # if var:
-        #     print(
-        #         f"Declared '{var_mut}' variable '{var.name}' of type '{var.type}' with value '{var.value}'"
-        #     )
-        # print("This is node[4]")
-        # print(node[4])
-        # print("This is value")
-        # print(value)
-        # node[4] = value
     else:
         raise ValueError("Invalid declaration")
 
@@ -293,13 +249,12 @@ def handle_assignment(node, current_scope):
                     raise ValueError(
                         f"Type mismatch for variable '{var_name}' expected '{var_type}'"
                     )
-
     else:
         raise ValueError("Invalid assignment")
 
 
 # TODO: Fix the print statement so it accepts variables (DONE)
-# # Handles print statements
+# Handles print statements
 def handle_print_statement(node, current_scope):
     if len(node) == 2:
         # Check is it an identifier or a string
@@ -382,23 +337,20 @@ def handle_print_statement(node, current_scope):
         raise ValueError("Invalid scribe statement")
 
 
-# # Handles attempt and findout blocks
+# Handles attempt and findout blocks
 def handle_attempt_findout_block(node, current_scope):
     attempt_scope = new_scope(current_scope)
     handle_attempt_block(node[1], attempt_scope)
     handle_findout_block(node[2], attempt_scope)
-    # print(node)
 
 
-# # Handles attempt block
+# Handles attempt block
 def handle_attempt_block(node, current_scope):
-    # print(node[1])
     semantic_analyzer(node[1], current_scope)
 
 
-# # Handles findout block
+# Handles findout block
 def handle_findout_block(node, current_scope):
-    #     # print(node)
     semantic_analyzer(node[2], current_scope)
 
 
@@ -407,7 +359,6 @@ def handle_findout_block(node, current_scope):
 def handle_abstract_function_declaration(node, current_scope):
     check_if_function_exists = current_scope.lookup(node[1])
     if check_if_function_exists:
-        # print(f"Function '{node[1]}' is already declared")
         raise ValueError(f"Function '{node[1]}' is already declared")
     else:
         add_function = current_scope.insert(
@@ -417,28 +368,19 @@ def handle_abstract_function_declaration(node, current_scope):
             raise ValueError(f"Function '{node[1]}' is already declared")
         elif add_function:
             pass
-        # print(f"Declared function '{node[1]}'")
         else:
             raise ValueError(f"Function '{node[1]}' was not declared")
-        # add_to_symbol_table(node[1], None, node[3], True, "function")
-        # add_to_abstract_function_symbol_table(node[1], node[2], node[3])
-
-
-# def handle_parameter_declaration(node):
-#     pass
 
 
 # TODO: Implement parameter and argument declaration (DONE)
 # Handles abstract function call
 def handle_abstract_call(node, current_scope):
     check_if_function_exists = current_scope.lookup(node[1])
-    # print(node)
     if check_if_function_exists:
         # Declaring a new scope for the function
         function_scope = new_scope(current_scope)
         # Check if the function has parameters
         params = check_if_function_exists.params
-        # print(params)
         # Check if the function has arguments
         arguments = node[2]
         # if the function has no parameters and no arguments run the function
@@ -458,40 +400,25 @@ def handle_abstract_call(node, current_scope):
             raise ValueError(f"Expected {len(params)} arguments, got {len(arguments)}")
 
         for param, argument in zip(params, arguments):
-            # print(param, argument)
             if isinstance(argument[1], tuple):
                 argument_value = handle_expression(argument[1], current_scope)
-                # print(argument_value)
-                # print(f"This is the argument value\n\n\n")
                 if argument_value:
                     lookup_param = current_scope.lookup(param[2])
-                    # print(lookup_param)
-                    # print(param)
                     if lookup_param == None:
                         check_if_param_and_arg_are_same_type = type_checking(
                             param[1], argument_value
                         )
-                        # print(param[1], argument_value)
                         if not check_if_param_and_arg_are_same_type:
                             raise ValueError(
                                 f"Invalid argument'{argument_value}' of type '{type(argument_value).__name__}' not the same type as the parameter '{param[1]}'"
                             )
-                        # print(check_if_param_and_arg_are_same_type)
-
                         if check_if_param_and_arg_are_same_type:
                             function_scope.insert(
                                 VariableSymbol(
                                     param[2], param[1], argument_value, False
                                 )
                             )
-                            # function_scope.insert(
-                            #     ArgumentSymbol(param[2], argument_value, node[1])
-                            # )
                             lookup_param = function_scope.lookup(param[2])
-                            # print(
-                            #     f"Declared '{lookup_param.name}' of type '{lookup_param.type}' with value '{lookup_param.value}'"
-                            # )
-                        # print(f"Declared '{param[2]}' of type '{argument_value[1]}'")
                     else:
                         check_if_param_and_arg_are_same_type = type_checking(
                             lookup_param.type, argument_value
@@ -511,7 +438,6 @@ def handle_abstract_call(node, current_scope):
                         f"Invalid argument'{argument[1]}' expression not calculated"
                     )
             elif isinstance(argument[1], str):
-                # print(argument[1][0])
                 if argument[1][0] == "_":
                     lookup_var = current_scope.lookup(argument[1])
                     if not lookup_var:
@@ -528,7 +454,6 @@ def handle_abstract_call(node, current_scope):
                         function_scope.insert(
                             VariableSymbol(param[2], param[1], lookup_var.value, False)
                         )
-                        # print(function_scope.lookup(param[2]).value)
                 else:
                     check_type = type_checking(argument[1], param[1])
                     if not check_type:
@@ -538,21 +463,6 @@ def handle_abstract_call(node, current_scope):
                     function_scope.insert(
                         VariableSymbol(param[2], param[1], lookup_var.value, False)
                     )
-                    # print(function_scope.lookup(param[2]).value)
-                    # print(lookup_param.type, lookup_var.value)
-                    # raise ValueError("stop here")
-                    # check_if_param_and_arg_are_same_type = type_checking(
-                    #     param[1], argument_value
-                    # )
-                    # print(param[1], argument_value)
-                    # if not check_if_param_and_arg_are_same_type:
-                    #     raise ValueError(
-                    #         f"Invalid argument'{argument_value}' of type '{type(argument_value).__name__}' not the same type as the parameter '{param[1]}'"
-                    #     )
-                    # print(check_if_param_and_arg_are_same_type)
-                    # function_scope.insert(
-                    #     VariableSymbol(param[2], param[1], lookup_var.value, False)
-                    # )
             elif (
                 isinstance(argument[1], int)
                 or isinstance(argument[1], float)
@@ -565,7 +475,6 @@ def handle_abstract_call(node, current_scope):
                     raise ValueError(
                         f"Invalid argument'{argument[1]}' of type '{type(argument[1]).__name__}' not the same type as the parameter '{param[1]}'"
                     )
-                # print(check_if_param_and_arg_are_same_type)
                 function_scope.insert(
                     VariableSymbol(param[2], param[1], argument[1], False)
                 )
@@ -573,7 +482,6 @@ def handle_abstract_call(node, current_scope):
         statements_ast = check_if_function_exists.statements
         semantic_analyzer(statements_ast, function_scope)
     else:
-        # print(f"Function '{node[1]}' is not declared")
         raise ValueError(f"Function '{node[1]}' is not declared")
 
 
@@ -597,7 +505,6 @@ def handle_conditionals(node, current_scope):
 
 def helper_handle_if(node, current_scope):
     expression = handle_expression(node[1], current_scope)
-    # print(expression)
     if isinstance(expression, bool):
         if_scope = new_scope(current_scope)
         semantic_analyzer(node[2], if_scope)
@@ -627,7 +534,6 @@ def handle_if_elif_else(node, current_scope):
 
 def helper_handle_elif(node, current_scope):
     expression = handle_expression(node[1], current_scope)
-    # print(expression)
     if isinstance(expression, bool):
         elif_scope = new_scope(current_scope)
         semantic_analyzer(node[2], elif_scope)
@@ -642,7 +548,6 @@ def helper_handle_else(node, current_scope):
 
 def handle_aslongas(node, current_scope):
     expression = handle_expression(node[1], current_scope)
-    # print(expression)
     if type(expression) == bool:
         aslongas_scope = new_scope(current_scope)
         semantic_analyzer(node[2], aslongas_scope)
@@ -652,7 +557,6 @@ def handle_aslongas(node, current_scope):
 
 # Handles for loops
 def handle_for_loop(node, current_scope):
-    # print(node)
     if node[1] == "range":
         var = current_scope.lookup(node[2])
         if var:
@@ -660,10 +564,8 @@ def handle_for_loop(node, current_scope):
         for x in node[3]:
             for_scope = new_scope(current_scope)
             for_scope.insert(VariableSymbol(x[0], type(x[1]).__name__, x[1], True))
-            # add = add_to_symbol_table(x[0], type(x[1]).__name__, x[1], "for_argument")
             semantic_analyzer(node[4], for_scope)
     elif node[1] == "in":
-        # TODO: Add scope so that the variable declared in the for loop is removed after the loop and is used within the for loop
         var = current_scope.lookup(node[2])
         if var:
             raise ValueError(f"Variable '{node[3]}' in for loop is already declared")
@@ -672,6 +574,3 @@ def handle_for_loop(node, current_scope):
         semantic_analyzer(node[4], for_scope)
     else:
         raise ValueError("Invalid for loop")
-
-
-# semantic_analyzer(prints, global_symbol_table)

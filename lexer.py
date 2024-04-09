@@ -2,7 +2,16 @@ import ply.lex as lex
 from sourcecode import data as longdata
 from shortsourcecode import data as shortdata
 
-# Reserved words and type specifiers
+#####################################
+#         Authors:
+#####################################
+# Hugh Scott
+# Barrington Patterson
+# Sharethia McCarthy
+# Christina Wilson
+
+
+# Reserved words
 reserved_word = {
     "abstract": "ABSTRACT",
     "hail": "HAIL",
@@ -97,8 +106,9 @@ reserved_word = {
     "keyboardinterrupt": "KEYBOARDINTERRUPT",
 }
 
-# type_specifiers = {"int", "string", "bool", "address"}
+# list holing the mutex states
 mutables = {"lock", "unlock"}
+
 # Token list
 tokens = [
     "INTEGER",
@@ -130,13 +140,13 @@ tokens = [
     "STRING_LITERAL",
     "TYPE_SPECIFIER",
     "NOT",
-    "POWER",  # Added POWER token
-    "BITWISEAND",  # Added BITWISEAND token
-    "BITWISEOR",  # Added BITWISEOR token
-    "BITWISEXOR",  # Added BITWISEXOR token
-    "SHIFTLEFT",  # Added SHIFTLEFT token
-    "SHIFTRIGHT",  # Added SHIFTRIGHT token
-    "BITWISEINVERT",  # Added BITWISEINVERT token
+    "POWER",
+    "BITWISEAND",
+    "BITWISEOR",
+    "BITWISEXOR",
+    "SHIFTLEFT",
+    "SHIFTRIGHT",
+    "BITWISEINVERT",
 ] + list(reserved_word.values())
 
 # Ignored characters
@@ -164,16 +174,16 @@ t_LPAREN = r"\("
 t_RPAREN = r"\)"
 t_LBRACE = r"\{"
 t_RBRACE = r"\}"
-t_POWER = r"\*\*"  # Added regular expression for POWER token
-t_BITWISEAND = r"&"  # Added regular expression for BITWISEAND token
-t_BITWISEOR = r"\|"  # Added regular expression for BITWISEOR token
-t_BITWISEXOR = r"\^"  # Added regular expression for BITWISEXOR token
-t_SHIFTLEFT = r"<<"  # Added regular expression for SHIFTLEFT token
-t_SHIFTRIGHT = r">>"  # Added regular expression for SHIFTRIGHT token
-t_BITWISEINVERT = r"~"  # Added regular expression for BITWISEINVERT token
+t_POWER = r"\*\*"
+t_BITWISEAND = r"&"
+t_BITWISEOR = r"\|"
+t_BITWISEXOR = r"\^"
+t_SHIFTLEFT = r"<<"
+t_SHIFTRIGHT = r">>"
+t_BITWISEINVERT = r"~"
 
 
-# Define a function identifier token
+# Function identifier token
 def t_FUNCTIONID(t):
     r"[A-Z][A-Z_0-9]*"
     if t.value in reserved_word:
@@ -181,8 +191,6 @@ def t_FUNCTIONID(t):
     else:
         t.type = "FUNCTIONID"
     return t
-    # t.type = "FUNCTIONID"
-    # return t
 
 
 # Regular expression rule for booleans
@@ -190,16 +198,6 @@ def t_BOOLEAN(t):
     r"true|false"
     t.value = bool(t.value == "true")
     return t
-
-
-# def t_match_error(t):
-#     r"Error[a-zA-Z_0-9]*"
-#     # r"_?[a-zA-Z][a-zA-Z_0-9]*"
-#     if t.value in reserved_word:
-#         t.type = reserved_word[t.value]
-#     else:
-#         t.type = "ERROR"
-#     return t
 
 
 # Define an identifier token
@@ -262,52 +260,21 @@ def t_error(t):
     t.lexer.skip(1)
 
 
+# EOF handling rule
+# def t_eof(t):
+#     # Get more input (Example)
+#     more = raw_input("... ")
+#     if more:
+#         t.lexer.input(more)
+#         return t.lexer.token()
+#     return None
+
+
 # Build the lexer
 lexer = lex.lex()
 
-# Test the lexer
-# lexer.input(longdata)
+# Test the lexer here |
+#                     V
+# lexer.input(shortdata)
 # for token in lexer:
-#     print(token.type)
-
-
-# def t_IDENTIFIER(t):
-#     r"_?[a-zA-Z][a-zA-Z_0-9]*"
-#     if t.value.startswith("_"):
-#         t.type = "IDENTIFIER"
-#     elif t.value in reserved_word:
-#         t.type = reserved_word[t.value]
-#     return t
-
-
-# def t_keyword(t):
-#     r"[A-Z][a-zA-Z]*"
-#     if t.value in reserved_word:
-#         t.type = reserved_word[t.value]
-#     else:
-#         t.type = "IDENTIFIER"
-#     return t
-
-
-# # Regular expression rule for floats
-# def t_FLOAT(t):
-#     r"\d+\.\d*"
-#     t.value = float(t.value)
-#     return t
-
-
-# Define an address literal token
-# def t_ADDRESS_LITERAL(t):
-#     r'"0x[a-fA-F0-9]{40}"|"[a-fA-F0-9]{64}"'
-#     t.value = t.value[1:-1]  # Extract the actual address value
-#     t.type = "ADDRESS_LITERAL"
-#     return t
-
-
-# for token in lexer:
-#     print("*********************************")
-#     print("TOKEN TYPE: ", token.type)
-#     print("TOKEN VALUE: ", token.value)
-#     print("TOKEN LINE NUMBER: ", token.lineno)
-#     print("TOKEN POSITION: ", token.lexpos)
-#     print("*********************************")
+#     print(token)
