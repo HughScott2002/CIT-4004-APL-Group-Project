@@ -1,6 +1,9 @@
 .venv
 # Byte-compiled / optimized / DLL files
 __pycache__/
+.gcloudignore
+app.yaml
+tempCodeRunnerFile.py
 *.py[cod]
 *$py.class
 

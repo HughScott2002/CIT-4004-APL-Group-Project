@@ -24,47 +24,26 @@ def semantic_analyzer(ast, current_scope):
 # Type checking
 def type_checking(var_type, value):
     if var_type == "int":
-        # print(type(value))
         if type(value) != int:
             return False
-        # if not isinstance(value, int):
-        # print(f"Expected an integer, got type '{type(value).__name__}'")
-        # raise ValueError(f"Expected an integer, got '{type(value).__name__}'")
-        # return False
         else:
             return True
     elif var_type == "float":
         if type(value) != float:
-            # print(f"Expected a float, got '{type(value).__name__}'")
             return False
-        # if not isinstance(value, float):
-        #     # raise ValueError(f"Expected a float, got '{type(value).__name__}'")
-        #     return False
         else:
             return True
     elif var_type == "bool":
         if type(value) != bool:
-            # print(f"Expected a boolean, got '{type(value).__name__}'")
             return False
-        # if not isinstance(value, bool):
-        #     print(f"Expected a boolean, got '{type(value).__name__}'")
-        #     # raise ValueError(f"Expected a boolean, got '{type(value).__name__}'")
-        #     return False
         else:
             return True
     elif var_type == "string":
         if type(value) != str:
-            # print(f"Expected a string, got '{type(value).__name__}'")
             return False
-        # if not isinstance(value, str):
-        #     print(f"Expected a string, got '{type(value).__name__}'")
-        #     # raise ValueError(f"Expected a string, got '{type(value).__name__}'")
-        #     return False
         else:
             return True
     else:
-        # print(f"Unknown type '{var_type}'")
-        # raise ValueError(f"Unknown type '{var_type}'")
         return False
 
 
