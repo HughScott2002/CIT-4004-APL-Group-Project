@@ -22,6 +22,7 @@ allowed_origins = [
     "*",
 ]
 CORS(app, origins=allowed_origins)
+printed_output = ""
 
 
 @app.route("/generate_code", methods=["POST"])
@@ -56,5 +57,15 @@ def parse_code():
     return jsonify(response)
 
 
+# Get the output from the compiled Python code
+@app.route("/get_output", methods=["GET"])
+def get_output():
+    if not printed_output:
+        response = {"output": "No output to display."}
+        return jsonify(response)
+    response = {"output": printed_output}
+    return jsonify(response)
+
+
 if __name__ == "__main__":
-    app.run(debug=True)
+    app.run(host="0.0.0.0", port=8000, debug=True)
