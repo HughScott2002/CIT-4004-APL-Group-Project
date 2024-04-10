@@ -16,9 +16,9 @@ TypeSnake is a statically-typed, functional programming language inspired by Pyt
 
 ## Getting Started
 
-1. **Run locally**: run pip install, then run python main.py
+1. **Run locally**: run pip install, then run python app.py
 
-2. **Run as server backend**: run pip install, then run app.py
+2. **Run as server backend**: run pip install, then run main.py
 
 ## Features
 
