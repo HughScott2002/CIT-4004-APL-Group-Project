@@ -15,7 +15,7 @@ from flask_cors import CORS
 # TODO: Finish the server backend (Done)
 
 
-app = Flask(__name__, request)
+app = Flask(__name__)
 allowed_origins = [
     "https://apl-cit-4004-web-ui.vercel.app",
     "https://apl-web-ui.vercel.app",
