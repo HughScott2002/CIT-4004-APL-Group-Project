@@ -57,6 +57,11 @@ def parse_code():
     return jsonify(response)
 
 
+@app.route("/test", methods=["GET"])
+def test():
+    return jsonify({"message": "Hello, World!"})
+
+
 # Get the output from the compiled Python code
 @app.route("/get_output", methods=["GET"])
 def get_output():

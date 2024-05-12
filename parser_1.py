@@ -421,10 +421,10 @@ def p_empty(p):
 def p_error(p):
     if p:
         # print(f"Syntax error at line {p.lineno}, token='{p.value}'")
-        raise ValueError(f"Syntax error at line {p.lineno}, token='{p.value} '")
+        raise SyntaxError(f"Syntax error at line {p.lineno}, token='{p.value} '")
     else:
         # print("Syntax error at EOF")
-        raise ValueError(f"Syntax error at EOF")
+        raise SyntaxError(f"Syntax error at EOF")
 
 
 parser = yacc.yacc()
@@ -432,6 +432,6 @@ parser = yacc.yacc()
 
 # Test the parser here |
 #                      V
-# input_data = shortdata
+input_data = shortdata
 # result = parser.parse(input_data)
 # print(result)

@@ -48,7 +48,7 @@ class SymbolTable:
 
     def update(self, name, new_symbol):
         if name not in self.symbols:
-            raise ValueError(f"Symbol '{name}' does not exist and couldn't be updated")
+            raise Exception(f"Symbol '{name}' does not exist and couldn't be updated")
         self.symbols[name] = new_symbol
 
     def get_all_symbols(self):

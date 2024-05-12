@@ -255,7 +255,7 @@ def t_newline(t):
 # Error handling for invalid characters
 def t_error(t):
     print(f"********************************")
-    print(f"ERROR: Invalid Character {t.value[0]} at line {t.lineno}")
+    print(f"ERROR: Invalid Character {t.value[0]!r} at line {t.lineno}")
     print(f"********************************")
     t.lexer.skip(1)
 
@@ -275,6 +275,8 @@ lexer = lex.lex()
 
 # Test the lexer here |
 #                     V
-# lexer.input(shortdata)
-# for token in lexer:
-#     print(token)
+lexer.input("( ) + = -")
+for token in lexer:
+    print(token.type)
+    print(token.value)
+    print("  ")

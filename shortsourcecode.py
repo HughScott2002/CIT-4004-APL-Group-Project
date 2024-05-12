@@ -5,7 +5,8 @@ data = """
 # Global variables
 # *************************************************************
 # unlock int _COUNT = (0 + 2 + 3)@ #Declaration
-# lock string _Global_var = "This is a global variable."@
+lock string _Global_var = "This is a global variable."@
+# _Global_var = 1@
 # lock int _TEN = 10@
 # lock float _PI = 3.14@ 
 # unlock bool _BINARY = true@
@@ -186,5 +187,8 @@ hail IS_IT_TRUE(true, false)@
 # }
 # scribe(_COUNT)@
 # *************************************************************
+
+
+
 
 """

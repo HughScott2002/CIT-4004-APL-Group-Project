@@ -4,6 +4,15 @@ from semantic_analyzer import semantic_analyzer
 from code_generator import generate_code
 
 
+# TODO: Fix the errors
+# TODO: Implement all the data types
+# TODO: Implement all the operators
+# TODO: Implement all the statements
+# TODO: Implement all the expressions
+
+# TODO: Implement the useful functions
+
+
 def main():
     # Get the source code
     from sourcecode import data as longdata
@@ -14,7 +23,7 @@ def main():
     print("*" * 50)
     print("Parsing the source code:")
     # Parse the long data
-    ast = parser.parse(shortdata)  # Change this to longdata to test all the features
+    ast = parser.parse(longdata)  # Change this to longdata to test all the features
     print(ast)
     print("*" * 50)
 
@@ -28,7 +37,8 @@ def main():
     print("*" * 50)
     print("Generating Python code:")
     python_code = generate_code(ast)
-    exec(python_code)
+    print(python_code)
+    # exec(python_code)
     print("*" * 50)
 
 
