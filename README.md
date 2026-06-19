@@ -22,10 +22,11 @@ Originally a university group project (CIT-4004) with a custom syntax (`scribe`,
 ├── examples/               Sample TypeSnake source programs
 ├── docs/                   Documentation, BNF grammar, future vision
 ├── tests/                  Test suite (scaffolded)
-├── pyproject.toml          Project metadata, ruff config
-├── Dockerfile              Containerised deployment
-├── compose.yaml            Docker Compose configuration
-└── requirements.txt        Python dependencies
+├── flake.nix                Nix flake (dev shell with `nix develop`)
+├── pyproject.toml           Project metadata, ruff config
+├── Dockerfile               Containerised deployment
+├── compose.yaml             Docker Compose configuration
+└── requirements.txt         Python dependencies
 ```
 
 ## Getting Started
@@ -43,6 +44,25 @@ PYTHONPATH=src gunicorn --bind=0.0.0.0 --timeout 600 server.main:app
 # Run the CLI version
 PYTHONPATH=src python server/app.py
 ```
+
+## Nix
+
+If you have Nix with flakes enabled, one command gets you a shell with Python 3.12, all dependencies, ruff, and pytest:
+
+```bash
+nix develop
+```
+
+Inside the shell, `PYTHONPATH` is set automatically, so you can run directly:
+
+```bash
+python server/main.py       # API server
+python server/app.py        # CLI
+ruff check src/ server/     # lint
+pytest                      # tests
+```
+
+Non-flake Nix: `nix-shell` also works via the included `shell.nix`.
 
 ## Docker
 
