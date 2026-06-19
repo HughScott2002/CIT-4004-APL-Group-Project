@@ -4,7 +4,7 @@ A statically-typed, functional programming language that transpiles to Python.
 
 Originally a university group project (CIT-4004) with a custom syntax (`scribe`, `hail`, `lock`/`unlock`, `attempt`/`findout`). The transpiler uses PLY for lexing and parsing, performs semantic analysis with scoped symbol tables, and generates executable Python.
 
-**Status:** Student project, early stage. Working core pipeline with an eye toward becoming a Python superset. See [docs/FUTURE.md](docs/FUTURE.md) for the vision.
+> **Warning:** This is an experimental student project built for a university course (CIT-4004). It is not production software. The codebase has known issues (zero tests, `exec()` in the API, no type hints) and is maintained on a best-effort basis. For the long-term vision and how to contribute ideas, see [docs/FUTURE.md](docs/FUTURE.md) — PRs and suggestions are welcome.
 
 ## Authors
 
