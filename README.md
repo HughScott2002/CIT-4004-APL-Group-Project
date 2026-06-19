@@ -22,6 +22,7 @@ Originally a university group project (CIT-4004) with a custom syntax (`scribe`,
 ├── examples/               Sample TypeSnake source programs
 ├── docs/                   Documentation, BNF grammar, future vision
 ├── tests/                  Test suite (scaffolded)
+├── Makefile                 Unified entry point (dev, lint, test, docker)
 ├── flake.nix                Nix flake (dev shell with `nix develop`)
 ├── pyproject.toml           Project metadata, ruff config
 ├── Dockerfile               Containerised deployment
@@ -30,6 +31,19 @@ Originally a university group project (CIT-4004) with a custom syntax (`scribe`,
 ```
 
 ## Getting Started
+
+Use the Makefile as the entry point — no need to remember paths or flags:
+
+```bash
+make setup        # pip install -r requirements.txt
+make run          # start API server (localhost:8000)
+make cli          # run CLI version
+make lint         # ruff check
+make test         # pytest
+make docker       # docker compose up --build -d
+```
+
+Or without make:
 
 ```bash
 # Install dependencies
