@@ -1,8 +1,8 @@
 import ply.yacc as yacc
 
-from lexer import tokens
-from sourcecode import data as longdata
-from shortsourcecode import data as shortdata
+from typesnake.lexer import tokens
+from examples.sourcecode import data as longdata
+from examples.shortsourcecode import data as shortdata
 
 
 # Parsing rules

@@ -1,8 +1,8 @@
 from flask import Flask, request, jsonify
-from symbol_table import *
-from parser_1 import parser
-from semantic_analyzer import semantic_analyzer
-from code_generator import generate_code
+from typesnake.symbol_table import *
+from typesnake.parser_1 import parser
+from typesnake.semantic_analyzer import semantic_analyzer
+from typesnake.code_generator import generate_code
 import io, sys
 from flask_cors import CORS
 

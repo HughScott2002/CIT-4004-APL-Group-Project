@@ -1,0 +1,40 @@
+[build-system]
+requires = ["setuptools>=75.0"]
+build-backend = "setuptools.backends._legacy:_Backend"
+
+[project]
+name = "typesnake"
+version = "0.1.0"
+description = "A statically-typed functional programming language that transpiles to Python"
+readme = "README.md"
+authors = [
+    { name = "Hugh Scott" },
+    { name = "Barrington Patterson" },
+    { name = "Sharethia McCarthy" },
+    { name = "Christina Wilson" },
+]
+requires-python = ">=3.10"
+dependencies = [
+    "flask>=3.0",
+    "flask-cors>=4.0",
+    "gunicorn>=21.2",
+    "ply>=3.11",
+]
+
+[tool.setuptools.packages.find]
+where = ["src"]
+include = ["typesnake*"]
+
+[tool.ruff]
+target-version = "py310"
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "W"]
+
+[tool.ruff.lint.per-file-ignores]
+"__init__.py" = ["F401"]
+"src/typesnake/parsetab.py" = ["ALL"]
+"examples/*" = ["ALL"]
+
+[tool.pytest.ini_options]
+pythonpath = ["src"]

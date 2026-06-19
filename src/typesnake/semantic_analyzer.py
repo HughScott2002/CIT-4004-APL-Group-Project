@@ -1,4 +1,4 @@
-from symbol_table import *
+from typesnake.symbol_table import *
 
 
 # Goes through the AST and performs semantic analysis

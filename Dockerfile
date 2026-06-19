@@ -48,4 +48,5 @@ COPY . .
 EXPOSE 8000
 
 # Run the application.
-CMD python main.py
+ENV PYTHONPATH=/app/src
+CMD python server/main.py

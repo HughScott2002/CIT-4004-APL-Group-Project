@@ -1,6 +1,6 @@
 import ply.lex as lex
-from sourcecode import data as longdata
-from shortsourcecode import data as shortdata
+from examples.sourcecode import data as longdata
+from examples.shortsourcecode import data as shortdata
 
 #####################################
 #         Authors:
