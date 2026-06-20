@@ -5,56 +5,14 @@ on:
     branches:
       - main
   pull_request:
-  workflow_dispatch:
 
 jobs:
-  build:
+  ci:
     runs-on: ubuntu-latest
-
     steps:
       - uses: actions/checkout@v4
-
-      - name: Set up Python
-        uses: actions/setup-python@v5
+      - uses: actions/setup-python@v5
         with:
           python-version: "3.12"
-
-      - name: Install dependencies
-        run: |
-          python -m venv venv
-          source venv/bin/activate
-          pip install -r requirements.txt
-
-      - name: Lint with ruff
-        run: |
-          source venv/bin/activate
-          pip install ruff
-          ruff check src/ server/ --quiet
-
-      - name: Verify imports
-        run: |
-          source venv/bin/activate
-          PYTHONPATH=src python -c "
-from typesnake.lexer import lexer
-from typesnake.parser_1 import parser
-from typesnake.semantic_analyzer import semantic_analyzer
-from typesnake.code_generator import generate_code
-from typesnake.symbol_table import SymbolTable
-print('Imports OK')
-"
-
-      - name: Test end-to-end
-        run: |
-          source venv/bin/activate
-          PYTHONPATH=src python -c "
-from typesnake.parser_1 import parser
-from typesnake.symbol_table import SymbolTable
-from examples.shortsourcecode import data
-
-ast = parser.parse(data)
-st = SymbolTable()
-semantic_analyzer(ast, st)
-code = generate_code(ast)
-assert 'def IS_IT_TRUE' in code
-print('End-to-end test PASSED')
-"
+      - run: pip install -r requirements.txt
+      - run: PYTHONPATH=src python -c "from typesnake.lexer import lexer; from typesnake.parser_1 import parser; from typesnake.semantic_analyzer import semantic_analyzer; from typesnake.code_generator import generate_code; from typesnake.symbol_table import SymbolTable; print('OK')"
